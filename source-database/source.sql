@@ -18,7 +18,7 @@ CREATE TABLE Aircraft
     -- Aircraft specifications
     Passenger_Capacity INT,
     Fuel_Capacity_Liters DECIMAL(10,2),
-    Cargo_Capacity_Kilo INT,
+    Cargo_Capacity_KG INT,
     Is_Active BIT DEFAULT 1,
 );
 
