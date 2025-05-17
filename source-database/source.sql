@@ -6,37 +6,43 @@ USE Airline_Source_DB;
 
 CREATE TABLE Aircraft
 (
+    -- aircraft id and registration
     Aircraft_ID INT PRIMARY KEY,
     Registration_Number VARCHAR(20),
+    -- Aircraft information
     Model VARCHAR(50),
-    Capacity INT,
     Manufacturer VARCHAR(50),
-    Engine_Type VARCHAR(50),
-    Status VARCHAR(30),
     Manufacture_Date DATE,
+    Engine_Type VARCHAR(50),
     Max_Range_KM INT,
+    -- Aircraft specifications
+    Passenger_Capacity INT,
     Fuel_Capacity_Liters DECIMAL(10,2),
-    Wingspan_Meters DECIMAL(6,2)
+    Cargo_Capacity_Kilo INT,
+    Is_Active BIT DEFAULT 1,
 );
 
 
 
 CREATE TABLE Airport
 (
+    -- airport information
     Airport_Code VARCHAR(10) PRIMARY KEY,
     Airport_Name VARCHAR(100),
-    City VARCHAR(50),
-    Country VARCHAR(50),
     IATA_Code CHAR(3),
     ICAO_Code CHAR(4),
+    -- location information
+    City VARCHAR(50),
+    Country VARCHAR(50),
     Latitude DECIMAL(10,6),
     Longitude DECIMAL(10,6),
-    Elevation_Feet INT,
     Timezone VARCHAR(50),
-    DST CHAR(1),
-    Is_International BIT,
+    -- airport specifications
+    Elevation_Feet INT,
+    Terminal_Count INT,
     Opening_Date DATE,
-    Terminal_Count INT
+    Is_International BIT,
+    Is_Active BIT DEFAULT 1,
 );
 
 
@@ -45,12 +51,27 @@ CREATE TABLE Airport
 CREATE TABLE Route
 (
     Route_ID INT PRIMARY KEY,
+    Route_Code VARCHAR(20),
+    -- route information
     Origin_Airport_Code VARCHAR(10),
     Destination_Airport_Code VARCHAR(10),
     Distance_KM INT,
-    Domestic_International VARCHAR(20),
+    Flight_Duration_Minutes INT,
+    Is_International BIT,
+    Is_Active BIT DEFAULT 1,
     FOREIGN KEY (Origin_Airport_Code) REFERENCES Airport(Airport_Code),
     FOREIGN KEY (Destination_Airport_Code) REFERENCES Airport(Airport_Code)
+);
+
+
+
+CREATE TABLE Loyalty_Tier
+(
+    Loyalty_Tier_ID INT PRIMARY KEY,
+    Tier_Name VARCHAR(50),
+    Benefits NVARCHAR(1000),
+    Required_Points INT,
+    Is_Active BIT DEFAULT 1
 );
 
 
@@ -58,25 +79,31 @@ CREATE TABLE Route
 CREATE TABLE Customer
 (
     Customer_ID INT PRIMARY KEY,
+    Passport_Code VARCHAR(20),
     First_Name VARCHAR(50),
     Last_Name VARCHAR(50),
     Email VARCHAR(100) UNIQUE,
-    Phone_Number VARCHAR(20),
+    Phone_Number VARCHAR(20) UNIQUE,
     Gender CHAR(1),
     Birth_Date DATE,
-    Country VARCHAR(50),
+    -- address information
+    Nationality VARCHAR(50),
     City VARCHAR(50),
+    Country VARCHAR(50),
     Address VARCHAR(200),
     Postal_Code VARCHAR(20),
-    Loyalty_Tier VARCHAR(50),
-    Loyalty_Points INT DEFAULT 0,
-    SignUp_Date DATE,
-    Loyalty_Change_Date DATE,
-    Last_Login_Date DATETIME,
     Preferred_Language VARCHAR(30),
+    -- loyalty program information
+    Loyalty_Tier_ID INT,
+    Loyalty_Points INT DEFAULT 0,
+    Loyalty_Change_Date DATE,
+    -- account information
     Is_Active BIT DEFAULT 1,
+    Last_Login_Date DATETIME,
     Created_At DATETIME2 DEFAULT SYSDATETIME(),
     Updated_At DATETIME2 DEFAULT SYSDATETIME()
+        -- foreign key constraints
+        FOREIGN KEY (Loyalty_Tier_ID) REFERENCES Loyalty_Tier(Loyalty_Tier_ID)
 );
 
 
@@ -84,30 +111,33 @@ CREATE TABLE Customer
 CREATE TABLE Class
 (
     Class_ID INT PRIMARY KEY,
-    Class_Name VARCHAR(50),
-    Services NVARCHAR(1000),
-    Price_Multiplier DECIMAL(4,2),
-    Baggage_Allowance_KG DECIMAL(5,2),
-    Seat_Pitch_CM INT,
-    Priority_Boarding BIT DEFAULT 0,
-    Lounge_Access BIT DEFAULT 0,
-    Meal_Service_Level VARCHAR(50),
-    Is_Active BIT DEFAULT 1
+    Class_Code VARCHAR(10) NOT NULL,
+    Class_Name VARCHAR(50) NOT NULL,
+    Description NVARCHAR(500),
+    -- Pricing information
+    Base_Price_Multiplier DECIMAL(4,2) NOT NULL,
+    Change_Fee_Amount DECIMAL(10,2),
+    Cancellation_Fee_Amount DECIMAL(10,2),
+    -- Passenger benefits
+    Baggage_Allowance_KG DECIMAL(5,2) NOT NULL,
+    Carry_On_Allowance_KG DECIMAL(5,2) NOT NULL,
+    -- Status information
+    Is_Active BIT DEFAULT 1 NOT NULL,
 );
 
 
 
 CREATE TABLE Payment_Method
 (
+    -- payment method information
     Payment_Method_ID INT PRIMARY KEY,
     Method_Name VARCHAR(50),
+    Description NVARCHAR(200),
+    -- provider information
     Provider_Name VARCHAR(50),
     Processing_Fee DECIMAL(5,2),
     Currency VARCHAR(3),
-    Is_Active BIT DEFAULT 1,
-    Added_Date DATETIME DEFAULT GETDATE(),
-    Security_Level VARCHAR(20),
-    Description NVARCHAR(200)
+    Is_Active BIT DEFAULT 1
 );
 
 
@@ -115,14 +145,16 @@ CREATE TABLE Payment_Method
 CREATE TABLE Cargo_Type
 (
     Cargo_Type_ID INT PRIMARY KEY,
-    Type_Name VARCHAR(100),
+    Type_Name VARCHAR(100) NOT NULL,
     Description NVARCHAR(1000),
-    Is_Hazardous BIT
+    Is_Hazardous BIT NOT NULL DEFAULT 0,
+    Max_Weight_KG DECIMAL(10,2),
 );
 
 
 
-CREATE TABLE Employee (
+CREATE TABLE Employee
+(
     Employee_ID INT PRIMARY KEY,
     First_Name VARCHAR(50),
     Last_Name VARCHAR(50),
@@ -131,13 +163,13 @@ CREATE TABLE Employee (
     Birth_Date DATE,
     Hire_Date DATE,
     Exit_Date DATE NULL,
-    Is_Active BIT DEFAULT 1,
     Emergency_Contact VARCHAR(100) NULL
 );
 
 
 
-CREATE TABLE Crew (
+CREATE TABLE Crew
+(
     Crew_ID INT PRIMARY KEY,
     Employee_ID INT,
     Role VARCHAR(50),
@@ -152,7 +184,8 @@ CREATE TABLE Crew (
 
 
 
-CREATE TABLE Technician (
+CREATE TABLE Technician
+(
     Technician_ID INT PRIMARY KEY,
     Employee_ID INT,
     Specialty VARCHAR(100),
@@ -175,34 +208,68 @@ CREATE TABLE Maintenance_Type
     Description NVARCHAR(1000),
     Tools_Required NVARCHAR(1000),
     Estimated_Duration_Hours INT,
-    Frequency_Days INT,
-    Is_Mandatory BIT DEFAULT 1,
     FAA_Required BIT
+);
+
+
+
+CREATE TABLE Flight_Status
+(
+    Flight_Status_ID INT PRIMARY KEY,
+    Status_Name VARCHAR(50),
+    Description NVARCHAR(200),
 );
 
 
 
 CREATE TABLE Flight
 (
+    -- flight information
     Flight_ID INT PRIMARY KEY,
     Flight_Number VARCHAR(10),
+    Flight_Date DATE,
+    -- route information
     Aircraft_ID INT,
     Route_ID INT,
-    Flight_Date DATE,
-    Scheduled_Departure TIME,
-    Scheduled_Arrival TIME,
-    Actual_Departure TIME,
-    Actual_Arrival TIME,
-    Departure_Delay_Minutes INT,
-    Arrival_Delay_Minutes INT,
+    Scheduled_Departure DATETIME,
+    Scheduled_Arrival DATETIME,
+    Actual_Departure DATETIME,
+    Actual_Arrival DATETIME,
+    -- Departure_Delay_Minutes INT,
+    -- Arrival_Delay_Minutes INT,
     Passenger_Count INT,
     Revenue DECIMAL(10,2),
-    Flight_Status VARCHAR(50),
-    Cancelled BIT,
-    Cancellation_Reason_Code VARCHAR(20),
-    Cancellation_Date DATE,
+    Flight_Status_ID INT,
+    FOREIGN KEY (Flight_Status_ID) REFERENCES Flight_Status(Flight_Status_ID),
     FOREIGN KEY (Aircraft_ID) REFERENCES Aircraft(Aircraft_ID),
     FOREIGN KEY (Route_ID) REFERENCES Route(Route_ID)
+);
+
+
+
+CREATE TABLE Booking_Cancellation_Reason
+(
+    Cancellation_ID INT PRIMARY KEY,
+    Reason NVARCHAR(200),
+    Description NVARCHAR(1000)
+);
+
+
+
+CREATE TABLE Booking
+(
+    Booking_ID INT PRIMARY KEY,
+    Customer_ID INT,
+    Payment_Method_ID INT,
+    Booking_Date DATETIME,
+    Total_Amount DECIMAL(10,2),
+    Cancellation_Reason_ID INT,
+    Cancellation_Fee DECIMAL(10,2),
+    Created_At DATETIME2 DEFAULT SYSDATETIME(),
+    Updated_At DATETIME2 DEFAULT SYSDATETIME(),
+    FOREIGN KEY (Customer_ID) REFERENCES Customer(Customer_ID),
+    FOREIGN KEY (Payment_Method_ID) REFERENCES Payment_Method(Payment_Method_ID),
+    FOREIGN KEY (Cancellation_Reason_ID) REFERENCES Booking_Cancellation_Reason(Cancellation_ID)
 );
 
 
@@ -210,21 +277,19 @@ CREATE TABLE Flight
 CREATE TABLE Ticket
 (
     Ticket_ID INT PRIMARY KEY,
-    Customer_ID INT,
+    Booking_ID INT,
     Flight_ID INT,
     Class_ID INT,
-    Payment_Method_ID INT,
     Price DECIMAL(10,2),
     Discount DECIMAL(10,2),
     Final_Amount DECIMAL(10,2),
-    Is_Refunded BIT,
-    Sale_Date DATE,
+    Seat_Number VARCHAR(10),
+    Check_In_Status BIT DEFAULT 0,
     Created_At DATETIME2 DEFAULT SYSDATETIME(),
     Updated_At DATETIME2 DEFAULT SYSDATETIME(),
-    FOREIGN KEY (Customer_ID) REFERENCES Customer(Customer_ID),
+    FOREIGN KEY (Booking_ID) REFERENCES Booking(Booking_ID),
     FOREIGN KEY (Flight_ID) REFERENCES Flight(Flight_ID),
-    FOREIGN KEY (Class_ID) REFERENCES Class(Class_ID),
-    FOREIGN KEY (Payment_Method_ID) REFERENCES Payment_Method(Payment_Method_ID)
+    FOREIGN KEY (Class_ID) REFERENCES Class(Class_ID)
 );
 
 
@@ -232,14 +297,16 @@ CREATE TABLE Ticket
 CREATE TABLE Maintenance
 (
     Maintenance_ID INT PRIMARY KEY,
-    Aircraft_ID INT,
-    Maintenance_Type_ID INT,
-    Technician_ID INT,
-    Maintenance_Start_Date DATE,
-    Maintenance_End_Date DATE,
-    Duration_Hours INT,
+    Aircraft_ID INT NOT NULL,
+    Maintenance_Type_ID INT NOT NULL,
+    Technician_ID INT NOT NULL,
+    Maintenance_Start_Date DATETIME NOT NULL,
+    Maintenance_End_Date DATETIME NULL,
+    Duration_Hours DECIMAL(6,2),
     Cost DECIMAL(10,2),
     Issue_Description NVARCHAR(2000),
+    Resolution_Notes NVARCHAR(2000),
+    Parts_Replaced NVARCHAR(1000),
     FOREIGN KEY (Aircraft_ID) REFERENCES Aircraft(Aircraft_ID),
     FOREIGN KEY (Maintenance_Type_ID) REFERENCES Maintenance_Type(Maintenance_Type_ID),
     FOREIGN KEY (Technician_ID) REFERENCES Technician(Technician_ID)
@@ -249,12 +316,13 @@ CREATE TABLE Maintenance
 
 CREATE TABLE Feedback
 (
+    Feedback_ID INT PRIMARY KEY,
     Customer_ID INT,
     Flight_ID INT,
     Feedback_Date DATE,
     Rating INT CHECK (Rating BETWEEN 1 AND 5),
     Comment_Text NVARCHAR(2000),
-    PRIMARY KEY (Customer_ID, Flight_ID, Feedback_Date),
+    UNIQUE (Customer_ID, Flight_ID),
     FOREIGN KEY (Customer_ID) REFERENCES Customer(Customer_ID),
     FOREIGN KEY (Flight_ID) REFERENCES Flight(Flight_ID)
 );
@@ -272,7 +340,8 @@ CREATE TABLE Cargo
     Declared_Value DECIMAL(10,2),
     Is_Lost BIT,
     Is_Damaged BIT,
-    Cargo_Date DATE,
+    Is_Insure BIT,
+    Cargo_Delivery_Date DATE,
     FOREIGN KEY (Customer_ID) REFERENCES Customer(Customer_ID),
     FOREIGN KEY (Flight_ID) REFERENCES Flight(Flight_ID),
     FOREIGN KEY (Cargo_Type_ID) REFERENCES Cargo_Type(Cargo_Type_ID)
@@ -290,8 +359,3 @@ CREATE TABLE Flight_Crew
     FOREIGN KEY (Flight_ID) REFERENCES Flight(Flight_ID),
     FOREIGN KEY (Crew_ID) REFERENCES Crew(Crew_ID)
 );
-
--- Add unique index for Flight_Number
-CREATE UNIQUE INDEX idx_Flight_FlightNumber ON Flight(Flight_Number);
--- Add index for Route_ID
-CREATE INDEX idx_Flight_RouteID ON Flight(Route_ID);
