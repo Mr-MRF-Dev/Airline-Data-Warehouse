@@ -47,7 +47,6 @@ CREATE TABLE Airport
 
 
 
-
 CREATE TABLE Route
 (
     Route_ID INT PRIMARY KEY,

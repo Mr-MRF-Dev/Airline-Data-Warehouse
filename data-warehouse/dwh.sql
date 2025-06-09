@@ -2,23 +2,46 @@
 CREATE DATABASE Airline_DW;
 USE Airline_DW;
 
--- ===================================================================
--- ======================    All Dimensions    =======================
--- ===================================================================
+-- ==========================================================
+-- ==================    All Dimensions    ==================
+-- ==========================================================
 
 
 
 -- TODO: update dim date
-CREATE TABLE Dim_Date
+CREATE TABLE Dim_DateTime
 (
-    Date_Key INT PRIMARY KEY,
-    Full_Date DATE NOT NULL,
-    Day INT,
-    Month INT,
-    Year INT,
-    Quarter INT,
-    Weekday_Name VARCHAR(20),
-    Is_Weekend BIT
+    DateTime_Key DATETIME PRIMARY KEY,
+    -- Date
+    Full_Date_Alternate_Key DATE,
+    Persian_Full_Date_Alternate_Key VARCHAR(10),
+    Day_Number_Of_Week INT,
+    Persian_Day_Number_Of_Week INT,
+    English_Day_Name_Of_Week VARCHAR(10),
+    Persian_Day_Name_Of_Week VARCHAR(10),
+    Day_Number_Of_Month INT,
+    Persian_Day_Number_Of_Month INT,
+    Day_Number_Of_Year INT,
+    Persian_Day_Number_Of_Year INT,
+    Week_Number_Of_Year INT,
+    Persian_Week_Number_Of_Year INT,
+    English_Month_Name VARCHAR(10),
+    Persian_Month_Name VARCHAR(10),
+    Month_Number_Of_Year INT,
+    Persian_Month_Number_Of_Year INT,
+    Calendar_Quarter INT,
+    Persian_Calendar_Quarter INT,
+    Calendar_Year INT,
+    Persian_Calendar_Year INT,
+    Calendar_Semester INT,
+    Persian_Calendar_Semester INT,
+    -- Time
+    Full_GMT_Time_Alternate_Key TIME,
+    Full_IR_Time_Alternate_Key TIME,
+    GMT_Hour_Of_Time INT,
+    IR_Hour_Of_Time INT,
+    GMT_Minute_Of_Time INT,
+    IR_Minute_Of_Time INT
 );
 
 
@@ -215,7 +238,7 @@ CREATE TABLE Dim_Payment_Method
 CREATE TABLE Fact_Flight_Operations
 (
     Flight_SK INT PRIMARY KEY,
-    Date_Key INT REFERENCES Dim_Date(Date_Key),
+    Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
     Aircraft_SK INT REFERENCES Dim_Aircraft(Aircraft_SK),
     Route_SK INT REFERENCES Dim_Route(Route_SK),
     Schedule_SK INT REFERENCES Dim_Schedule(Schedule_SK),
@@ -234,7 +257,7 @@ CREATE TABLE Fact_Flight_Operations
 CREATE TABLE Fact_Flight_Snapshot_Monthly
 (
     Snapshot_ID INT PRIMARY KEY,
-    Snapshot_Date_Key INT REFERENCES Dim_Date(Date_Key),
+    Snapshot_Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
     Aircraft_SK INT REFERENCES Dim_Aircraft(Aircraft_SK),
     Route_SK INT REFERENCES Dim_Route(Route_SK),
     Total_Flights INT,
@@ -263,7 +286,7 @@ CREATE TABLE Fact_Flight_Lifecycle
 CREATE TABLE Fact_Route_Execution
 (
     Route_SK INT REFERENCES Dim_Route(Route_SK),
-    Date_Key INT REFERENCES Dim_Date(Date_Key),
+    Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
     Aircraft_SK INT REFERENCES Dim_Aircraft(Aircraft_SK),
     PRIMARY KEY (Route_SK, Date_Key, Aircraft_SK)
 );
@@ -274,7 +297,7 @@ CREATE TABLE Fact_Ticket_Sales
     Ticket_ID INT PRIMARY KEY,
     Customer_SK INT REFERENCES Dim_Customer(Customer_SK),
     Flight_SK INT REFERENCES Dim_Flight(Flight_SK),
-    Date_Key INT REFERENCES Dim_Date(Date_Key),
+    Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
     Class_SK INT REFERENCES Dim_Class(Class_SK),
     Payment_Method_ID INT REFERENCES Dim_Payment_Method(Payment_Method_ID),
     Price DECIMAL(10,2),
@@ -287,7 +310,7 @@ CREATE TABLE Fact_Ticket_Sales
 CREATE TABLE Fact_Ticket_Sales_Snapshot
 (
     Snapshot_ID INT PRIMARY KEY,
-    Snapshot_Date_Key INT REFERENCES Dim_Date(Date_Key),
+    Snapshot_Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
     Class_SK INT REFERENCES Dim_Class(Class_SK),
     Total_Tickets_Sold INT,
     Total_Revenue DECIMAL(12,2),
@@ -313,7 +336,7 @@ CREATE TABLE Fact_Customer_Feedback
 (
     Customer_SK INT REFERENCES Dim_Customer(Customer_SK),
     Flight_SK INT REFERENCES Dim_Flight(Flight_SK),
-    Feedback_Date_Key INT REFERENCES Dim_Date(Date_Key),
+    Feedback_Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
     Rating INT,
     Comment_Text NVARCHAR(2000),
     PRIMARY KEY (Customer_SK, Flight_SK, Feedback_Date_Key)
@@ -326,8 +349,8 @@ CREATE TABLE Fact_Maintenance_Log
     Aircraft_SK INT REFERENCES Dim_Aircraft(Aircraft_SK),
     Maintenance_Type_SK INT REFERENCES Dim_Maintenance_Type(Maintenance_Type_SK),
     Technician_ID INT REFERENCES Dim_Technician(Technician_ID),
-    Start_Date_Key INT REFERENCES Dim_Date(Date_Key),
-    End_Date_Key INT REFERENCES Dim_Date(Date_Key),
+    Start_Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
+    End_Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
     Start_Date DATE,
     End_Date DATE,
     Duration_Hours INT,
@@ -339,7 +362,7 @@ CREATE TABLE Fact_Maintenance_Log
 CREATE TABLE Fact_Maintenance_Snapshot_Monthly
 (
     Snapshot_ID INT PRIMARY KEY,
-    Snapshot_Date_Key INT REFERENCES Dim_Date(Date_Key),
+    Snapshot_Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
     Aircraft_SK INT REFERENCES Dim_Aircraft(Aircraft_SK),
     Total_Maintenances INT,
     Total_Cost DECIMAL(12,2),
@@ -365,7 +388,7 @@ CREATE TABLE Fact_Aircraft_Lifecycle
 CREATE TABLE Fact_Health_Checks
 (
     Aircraft_SK INT REFERENCES Dim_Aircraft(Aircraft_SK),
-    Date_Key INT REFERENCES Dim_Date(Date_Key),
+    Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
     Technician_ID INT REFERENCES Dim_Technician(Technician_ID),
     Health_Score INT,
     Passed_Flag BIT,
