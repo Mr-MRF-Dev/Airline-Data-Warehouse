@@ -51,7 +51,8 @@ CREATE TABLE Dim_DateTime
 CREATE TABLE Dim_Aircraft
 (
     -- aircraft id and registration
-    Aircraft_ID INT PRIMARY KEY,
+    Aircraft_SK INT PRIMARY KEY,
+    Aircraft_ID INT,
     Registration_Number VARCHAR(20),
     -- Aircraft information
     Model VARCHAR(50),
@@ -78,7 +79,8 @@ CREATE TABLE Dim_Aircraft
 CREATE TABLE Dim_Airport
 (
     -- airport information
-    Airport_ID INT PRIMARY KEY,
+    Airport_SK INT PRIMARY KEY,
+    Airport_ID INT,
     Airport_Code VARCHAR(10),
     Airport_Name VARCHAR(100),
     IATA_Code CHAR(3),
@@ -108,7 +110,8 @@ CREATE TABLE Dim_Airport
 -- all fields using SCD Type 1 + one field SCD 2
 CREATE TABLE Dim_Route
 (
-    Route_ID INT PRIMARY KEY,
+    Route_SK INT PRIMARY KEY,
+    Route_ID INT,
     Route_Code VARCHAR(20),
     Route_Name VARCHAR(100),
     -- route information
@@ -133,7 +136,8 @@ CREATE TABLE Dim_Route
 -- all fields using SCD 1 + one field SCD 2
 CREATE TABLE Dim_Customer_Loyalty_Tier
 (
-    Loyalty_Tier_ID INT PRIMARY KEY,
+    Loyalty_Tier_SK INT PRIMARY KEY,
+    Loyalty_Tier_ID INT,
     Tier_Name VARCHAR(50),
     Benefits NVARCHAR(1000),
     Required_Points INT,
@@ -146,6 +150,54 @@ CREATE TABLE Dim_Customer_Loyalty_Tier
 );
 
 
+
+-- the Customer Dim
+-- all fields using SCD 1 / SCD 2
+CREATE TABLE Dim_Customer
+(
+    Customer_SK INT PRIMARY KEY,
+    Customer_ID INT,
+    -- Passport Code is SCD 2
+    Passport_Code VARCHAR(20),
+    First_Name VARCHAR(50),
+    Last_Name VARCHAR(50),
+    Email VARCHAR(100),
+    -- Phone Number is SCD 2
+    Phone_Number VARCHAR(20),
+    Gender CHAR(1),
+    Birth_Date DATE,
+    -- address information
+    Nationality VARCHAR(50),
+    City VARCHAR(50),
+    Country VARCHAR(50),
+    Address VARCHAR(200),
+    Postal_Code VARCHAR(20),
+    Preferred_Language VARCHAR(30),
+    -- loyalty program information
+    -- Loyalty Tier is SCD 2
+    Loyalty_Tier_ID INT,
+    Loyalty_Tier_NAME VARCHAR(50),
+    Loyalty_Change_Date DATE,
+    -- End of SCD 2
+    Loyalty_Points INT,
+    -- account information
+    -- is Active is SCD 2
+    Is_Active BIT,
+    Last_Login_Date DATETIME,
+    Created_At DATETIME,
+    -- Updated At is SCD 2
+    Updated_At DATETIME,
+
+    -- SCD Fields
+    Effective_Start_Date DATE,
+    Effective_End_Date DATE,
+    Passport_Code_Change_Bit BIT DEFAULT 0,
+    Phone_Number_Change_Bit BIT DEFAULT 0,
+    Loyalty_Tier_Change_Bit BIT DEFAULT 0,
+    Is_Active_Change_Bit BIT DEFAULT 0,
+    Updated_At_Change_Bit BIT DEFAULT 0,
+    Is_Current BIT DEFAULT 1
+);
 
 
 

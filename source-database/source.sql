@@ -100,8 +100,8 @@ CREATE TABLE Customer
     -- account information
     Is_Active BIT DEFAULT 1,
     Last_Login_Date DATETIME,
-    Created_At DATETIME2 DEFAULT SYSDATETIME(),
-    Updated_At DATETIME2 DEFAULT SYSDATETIME()
+    Created_At DATETIME DEFAULT SYSDATETIME(),
+    Updated_At DATETIME DEFAULT SYSDATETIME()
         -- foreign key constraints
         FOREIGN KEY (Loyalty_Tier_ID) REFERENCES Loyalty_Tier(Loyalty_Tier_ID)
 );
