@@ -47,7 +47,7 @@ CREATE TABLE Dim_DateTime
 
 
 -- Aircraft Dim
--- all fields using SCD Type 1
+-- all fields using SCD Type 1 + one field SCD 2
 CREATE TABLE Dim_Aircraft
 (
     -- aircraft id and registration
@@ -63,13 +63,18 @@ CREATE TABLE Dim_Aircraft
     Passenger_Capacity INT,
     Fuel_Capacity_Liters DECIMAL(10,2),
     Cargo_Capacity_KG INT,
+    -- SCD 2, track the aircraft activity
     Is_Active BIT,
+    Effective_Start_Date DATE,
+    Effective_End_Date DATE,
+    Is_Current BIT DEFAULT 1,
+    -- END of SCD 2
 );
 
 
 
 -- Airport Dim
--- all fields using SCD Type 1
+-- all fields using SCD Type 1 + one field SCD 2
 CREATE TABLE Dim_Airport
 (
     -- airport information
@@ -89,17 +94,23 @@ CREATE TABLE Dim_Airport
     Terminal_Count INT,
     Opening_Date DATE,
     Is_International BIT,
+    -- SCD 2, track the airport activity
     Is_Active BIT,
+    Effective_Start_Date DATE,
+    Effective_End_Date DATE,
+    Is_Current BIT DEFAULT 1,
+    -- END of SCD 2
 );
 
 
 
 -- Route Dim
--- all fields using SCD Type 1
+-- all fields using SCD Type 1 + one field SCD 2
 CREATE TABLE Dim_Route
 (
     Route_ID INT PRIMARY KEY,
     Route_Code VARCHAR(20),
+    Route_Name VARCHAR(100),
     -- route information
     Origin_Airport_ID INT,
     Destination_Airport_ID INT,
@@ -108,20 +119,30 @@ CREATE TABLE Dim_Route
     Distance_KM INT,
     Flight_Duration_Minutes INT,
     Is_International BIT,
+    -- SCD 2, track the route activity
     Is_Active BIT,
+    Effective_Start_Date DATE,
+    Effective_End_Date DATE,
+    Is_Current BIT DEFAULT 1,
+    -- END of SCD 2
 );
 
 
 
 -- the Dim Customer Loyalty Tier Dim
--- all felids using SCD 1
+-- all fields using SCD 1 + one field SCD 2
 CREATE TABLE Dim_Customer_Loyalty_Tier
 (
     Loyalty_Tier_ID INT PRIMARY KEY,
     Tier_Name VARCHAR(50),
     Benefits NVARCHAR(1000),
     Required_Points INT,
-    Is_Active BIT DEFAULT 1
+    -- SCD 2, track the loyalty tier activity
+    Is_Active BIT,
+    Effective_Start_Date DATE,
+    Effective_End_Date DATE,
+    Is_Current BIT DEFAULT 1,
+    -- END of SCD 2
 );
 
 

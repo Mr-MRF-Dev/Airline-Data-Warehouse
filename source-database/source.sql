@@ -51,6 +51,7 @@ CREATE TABLE Route
 (
     Route_ID INT PRIMARY KEY,
     Route_Code VARCHAR(20),
+    Route_Name VARCHAR(100),
     -- route information
     Origin_Airport_Code VARCHAR(10),
     Destination_Airport_Code VARCHAR(10),
