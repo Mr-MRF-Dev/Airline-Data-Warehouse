@@ -11,7 +11,7 @@ USE Airline_DW;
 -- all fields using SCD 1
 CREATE TABLE Dim_DateTime
 (
-    DateTime_Key DATETIME PRIMARY KEY,
+    DateTime_ID DATETIME PRIMARY KEY,
     -- Date
     Full_Date_Alternate_Key DATE,
     Persian_Full_Date_Alternate_Key VARCHAR(10),
@@ -51,7 +51,7 @@ CREATE TABLE Dim_DateTime
 CREATE TABLE Dim_Aircraft
 (
     -- aircraft id and registration
-    Aircraft_Key INT PRIMARY KEY,
+    Aircraft_ID INT PRIMARY KEY,
     Registration_Number VARCHAR(20),
     -- Aircraft information
     Model VARCHAR(50),
@@ -73,7 +73,7 @@ CREATE TABLE Dim_Aircraft
 CREATE TABLE Dim_Airport
 (
     -- airport information
-    Airport_Key INT PRIMARY KEY,
+    Airport_ID INT PRIMARY KEY,
     Airport_Code VARCHAR(10),
     Airport_Name VARCHAR(100),
     IATA_Code CHAR(3),
@@ -98,11 +98,11 @@ CREATE TABLE Dim_Airport
 -- all fields using SCD Type 1
 CREATE TABLE Dim_Route
 (
-    Route_Key INT PRIMARY KEY,
+    Route_ID INT PRIMARY KEY,
     Route_Code VARCHAR(20),
     -- route information
-    Origin_Airport_Key INT,
-    Destination_Airport_Key INT,
+    Origin_Airport_ID INT,
+    Destination_Airport_ID INT,
     Origin_Airport_Name VARCHAR(10),
     Destination_Airport_Name VARCHAR(10),
     Distance_KM INT,
