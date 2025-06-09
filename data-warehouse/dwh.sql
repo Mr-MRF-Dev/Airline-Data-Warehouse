@@ -7,8 +7,8 @@ USE Airline_DW;
 -- ==========================================================
 
 
-
--- TODO: update dim date
+-- Time Dim
+-- all fields using SCD 1
 CREATE TABLE Dim_DateTime
 (
     DateTime_Key DATETIME PRIMARY KEY,
@@ -113,6 +113,16 @@ CREATE TABLE Dim_Route
 
 
 
+-- the Dim Customer Loyalty Tier Dim
+-- all felids using SCD 1
+CREATE TABLE Dim_Customer_Loyalty_Tier
+(
+    Loyalty_Tier_ID INT PRIMARY KEY,
+    Tier_Name VARCHAR(50),
+    Benefits NVARCHAR(1000),
+    Required_Points INT,
+    Is_Active BIT DEFAULT 1
+);
 
 
 
