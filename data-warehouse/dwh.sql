@@ -1,9 +1,14 @@
-
-
+-- this file is data ware house, have facts and dimensions
 CREATE DATABASE Airline_DW;
 USE Airline_DW;
 
--- ========== Shared Dimension ==========
+-- ===================================================================
+-- ======================    All Dimensions    =======================
+-- ===================================================================
+
+
+
+-- TODO: update dim date
 CREATE TABLE Dim_Date
 (
     Date_Key INT PRIMARY KEY,
@@ -16,6 +21,104 @@ CREATE TABLE Dim_Date
     Is_Weekend BIT
 );
 
+
+
+-- Aircraft Dim
+-- all fields using SCD Type 1
+CREATE TABLE Dim_Aircraft
+(
+    -- aircraft id and registration
+    Aircraft_Key INT PRIMARY KEY,
+    Registration_Number VARCHAR(20),
+    -- Aircraft information
+    Model VARCHAR(50),
+    Manufacturer VARCHAR(50),
+    Manufacture_Date DATE,
+    Engine_Type VARCHAR(50),
+    Max_Range_KM INT,
+    -- Aircraft specifications
+    Passenger_Capacity INT,
+    Fuel_Capacity_Liters DECIMAL(10,2),
+    Cargo_Capacity_KG INT,
+    Is_Active BIT,
+);
+
+
+
+-- Airport Dim
+-- all fields using SCD Type 1
+CREATE TABLE Dim_Airport
+(
+    -- airport information
+    Airport_Key INT PRIMARY KEY,
+    Airport_Code VARCHAR(10),
+    Airport_Name VARCHAR(100),
+    IATA_Code CHAR(3),
+    ICAO_Code CHAR(4),
+    -- location information
+    City VARCHAR(50),
+    Country VARCHAR(50),
+    Latitude DECIMAL(10,6),
+    Longitude DECIMAL(10,6),
+    Timezone VARCHAR(50),
+    -- airport specifications
+    Elevation_Feet INT,
+    Terminal_Count INT,
+    Opening_Date DATE,
+    Is_International BIT,
+    Is_Active BIT,
+);
+
+
+
+-- Route Dim
+-- all fields using SCD Type 1
+CREATE TABLE Dim_Route
+(
+    Route_Key INT PRIMARY KEY,
+    Route_Code VARCHAR(20),
+    -- route information
+    Origin_Airport_Key INT,
+    Destination_Airport_Key INT,
+    Origin_Airport_Name VARCHAR(10),
+    Destination_Airport_Name VARCHAR(10),
+    Distance_KM INT,
+    Flight_Duration_Minutes INT,
+    Is_International BIT,
+    Is_Active BIT,
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- ========== Cancellation Reason Dimension ==========
 CREATE TABLE Dim_Cancellation_Reason
 (
@@ -26,52 +129,6 @@ CREATE TABLE Dim_Cancellation_Reason
     Is_Temporary BIT
 );
 
--- Airport (SCD1)
-CREATE TABLE Dim_Airport
-(
-    Airport_SK INT PRIMARY KEY,
-    Airport_Code VARCHAR(10),
-    Airport_Name VARCHAR(100),
-    City VARCHAR(50),
-    Country VARCHAR(50)
-);
-
--- Route (SCD1)
-CREATE TABLE Dim_Route
-(
-    Route_SK INT PRIMARY KEY,
-    Route_ID INT,
-    Origin_Airport_SK INT,
-    Destination_Airport_SK INT,
-    Distance_KM INT,
-    Domestic_International VARCHAR(20)
-);
-
--- Schedule (SCD3)
-CREATE TABLE Dim_Schedule
-(
-    Schedule_SK INT PRIMARY KEY,
-    Flight_Number VARCHAR(10),
-    Scheduled_Departure TIME,
-    Scheduled_Arrival TIME,
-    Previous_Departure TIME,
-    Previous_Arrival TIME
-);
-
--- Aircraft (SCD2)
-CREATE TABLE Dim_Aircraft
-(
-    Aircraft_SK INT PRIMARY KEY,
-    Aircraft_ID INT,
-    Registration_Number VARCHAR(20),
-    Model VARCHAR(50),
-    Capacity INT,
-    Manufacturer VARCHAR(50),
-    Status VARCHAR(30),
-    Entry_Date DATE,
-    Expiry_Date DATE,
-    Is_Current BIT
-);
 
 -- ========== Flight Dimension (SCD1) ==========
 CREATE TABLE Dim_Flight
