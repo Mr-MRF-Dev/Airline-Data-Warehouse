@@ -3,94 +3,106 @@ Table "Aircraft" {
   "Aircraft_ID" INT [pk]
   "Registration_Number" VARCHAR(20)
   "Model" VARCHAR(50)
-  "Capacity" INT
   "Manufacturer" VARCHAR(50)
-  "Engine_Type" VARCHAR(50)
-  "Status" VARCHAR(30)
   "Manufacture_Date" DATE
+  "Engine_Type" VARCHAR(50)
   "Max_Range_KM" INT
+  "Passenger_Capacity" INT
   "Fuel_Capacity_Liters" DECIMAL(10,2)
-  "Wingspan_Meters" DECIMAL(6,2)
+  "Cargo_Capacity_KG" INT
+  "Is_Active" BIT [default: 1]
 }
 
 Table "Airport" {
   "Airport_Code" VARCHAR(10) [pk]
   "Airport_Name" VARCHAR(100)
-  "City" VARCHAR(50)
-  "Country" VARCHAR(50)
   "IATA_Code" CHAR(3)
   "ICAO_Code" CHAR(4)
+  "City" VARCHAR(50)
+  "Country" VARCHAR(50)
   "Latitude" DECIMAL(10,6)
   "Longitude" DECIMAL(10,6)
-  "Elevation_Feet" INT
   "Timezone" VARCHAR(50)
-  "DST" CHAR(1)
-  "Is_International" BIT
-  "Opening_Date" DATE
+  "Elevation_Feet" INT
   "Terminal_Count" INT
+  "Opening_Date" DATE
+  "Is_International" BIT
+  "Is_Active" BIT [default: 1]
 }
 
 Table "Route" {
   "Route_ID" INT [pk]
+  "Route_Code" VARCHAR(20)
+  "Route_Name" VARCHAR(100)
   "Origin_Airport_Code" VARCHAR(10)
   "Destination_Airport_Code" VARCHAR(10)
   "Distance_KM" INT
-  "Domestic_International" VARCHAR(20)
+  "Flight_Duration_Minutes" INT
+  "Is_International" BIT
+  "Is_Active" BIT [default: 1]
+}
+
+Table "Loyalty_Tier" {
+  "Loyalty_Tier_ID" INT [pk]
+  "Tier_Name" VARCHAR(50)
+  "Benefits" NVARCHAR(1000)
+  "Required_Points" INT
+  "Is_Active" BIT [default: 1]
 }
 
 Table "Customer" {
   "Customer_ID" INT [pk]
+  "Passport_Code" VARCHAR(20)
   "First_Name" VARCHAR(50)
   "Last_Name" VARCHAR(50)
   "Email" VARCHAR(100) [unique]
-  "Phone_Number" VARCHAR(20)
+  "Phone_Number" VARCHAR(20) [unique]
   "Gender" CHAR(1)
   "Birth_Date" DATE
-  "Country" VARCHAR(50)
+  "Nationality" VARCHAR(50)
   "City" VARCHAR(50)
+  "Country" VARCHAR(50)
   "Address" VARCHAR(200)
   "Postal_Code" VARCHAR(20)
-  "Loyalty_Tier" VARCHAR(50)
-  "Loyalty_Points" INT [default: 0]
-  "SignUp_Date" DATE
-  "Loyalty_Change_Date" DATE
-  "Last_Login_Date" DATETIME
   "Preferred_Language" VARCHAR(30)
+  "Loyalty_Tier_ID" INT
+  "Loyalty_Points" INT [default: 0]
+  "Loyalty_Change_Date" DATE
   "Is_Active" BIT [default: 1]
-  "Created_At" DATETIME2 [default: `SYSDATETIME()`]
-  "Updated_At" DATETIME2 [default: `SYSDATETIME()`]
+  "Last_Login_Date" DATETIME
+  "Created_At" DATETIME [default: `SYSDATETIME()`]
+  "Updated_At" DATETIME [default: `SYSDATETIME()`]
 }
 
 Table "Class" {
   "Class_ID" INT [pk]
-  "Class_Name" VARCHAR(50)
-  "Services" NVARCHAR(1000)
-  "Price_Multiplier" DECIMAL(4,2)
-  "Baggage_Allowance_KG" DECIMAL(5,2)
-  "Seat_Pitch_CM" INT
-  "Priority_Boarding" BIT [default: 0]
-  "Lounge_Access" BIT [default: 0]
-  "Meal_Service_Level" VARCHAR(50)
-  "Is_Active" BIT [default: 1]
+  "Class_Code" VARCHAR(10) [not null]
+  "Class_Name" VARCHAR(50) [not null]
+  "Description" NVARCHAR(500)
+  "Base_Price_Multiplier" DECIMAL(4,2) [not null]
+  "Change_Fee_Amount" DECIMAL(10,2)
+  "Cancellation_Fee_Amount" DECIMAL(10,2)
+  "Baggage_Allowance_KG" DECIMAL(5,2) [not null]
+  "Carry_On_Allowance_KG" DECIMAL(5,2) [not null]
+  "Is_Active" BIT [not null, default: 1]
 }
 
 Table "Payment_Method" {
   "Payment_Method_ID" INT [pk]
   "Method_Name" VARCHAR(50)
+  "Description" NVARCHAR(200)
   "Provider_Name" VARCHAR(50)
   "Processing_Fee" DECIMAL(5,2)
   "Currency" VARCHAR(3)
   "Is_Active" BIT [default: 1]
-  "Added_Date" DATETIME [default: `GETDATE()`]
-  "Security_Level" VARCHAR(20)
-  "Description" NVARCHAR(200)
 }
 
 Table "Cargo_Type" {
   "Cargo_Type_ID" INT [pk]
-  "Type_Name" VARCHAR(100)
+  "Type_Name" VARCHAR(100) [not null]
   "Description" NVARCHAR(1000)
-  "Is_Hazardous" BIT
+  "Is_Hazardous" BIT [not null, default: 0]
+  "Max_Weight_KG" DECIMAL(10,2)
 }
 
 Table "Employee" {
@@ -102,7 +114,6 @@ Table "Employee" {
   "Birth_Date" DATE
   "Hire_Date" DATE
   "Exit_Date" DATE
-  "Is_Active" BIT [default: 1]
   "Emergency_Contact" VARCHAR(100)
 }
 
@@ -136,72 +147,87 @@ Table "Maintenance_Type" {
   "Description" NVARCHAR(1000)
   "Tools_Required" NVARCHAR(1000)
   "Estimated_Duration_Hours" INT
-  "Frequency_Days" INT
-  "Is_Mandatory" BIT [default: 1]
   "FAA_Required" BIT
+}
+
+Table "Flight_Status" {
+  "Flight_Status_ID" INT [pk]
+  "Status_Name" VARCHAR(50)
+  "Description" NVARCHAR(200)
 }
 
 Table "Flight" {
   "Flight_ID" INT [pk]
   "Flight_Number" VARCHAR(10)
+  "Flight_Date" DATE
   "Aircraft_ID" INT
   "Route_ID" INT
-  "Flight_Date" DATE
-  "Scheduled_Departure" TIME
-  "Scheduled_Arrival" TIME
-  "Actual_Departure" TIME
-  "Actual_Arrival" TIME
-  "Departure_Delay_Minutes" INT
-  "Arrival_Delay_Minutes" INT
+  "Scheduled_Departure" DATETIME
+  "Scheduled_Arrival" DATETIME
+  "Actual_Departure" DATETIME
+  "Actual_Arrival" DATETIME
   "Passenger_Count" INT
   "Revenue" DECIMAL(10,2)
-  "Flight_Status" VARCHAR(50)
-  "Cancelled" BIT
-  "Cancellation_Reason_Code" VARCHAR(20)
-  "Cancellation_Date" DATE
+  "Flight_Status_ID" INT
+}
 
-  Indexes {
-    Flight_Number [unique, name: "idx_Flight_FlightNumber"]
-    Route_ID [name: "idx_Flight_RouteID"]
-  }
+Table "Booking_Cancellation_Reason" {
+  "Cancellation_ID" INT [pk]
+  "Reason" NVARCHAR(200)
+  "Description" NVARCHAR(1000)
+}
+
+Table "Booking" {
+  "Booking_ID" INT [pk]
+  "Customer_ID" INT
+  "Payment_Method_ID" INT
+  "Booking_Date" DATETIME
+  "Total_Amount" DECIMAL(10,2)
+  "Cancellation_Reason_ID" INT
+  "Cancellation_Fee" DECIMAL(10,2)
+  "Created_At" DATETIME2 [default: `SYSDATETIME()`]
+  "Updated_At" DATETIME2 [default: `SYSDATETIME()`]
 }
 
 Table "Ticket" {
   "Ticket_ID" INT [pk]
-  "Customer_ID" INT
+  "Booking_ID" INT
   "Flight_ID" INT
   "Class_ID" INT
-  "Payment_Method_ID" INT
   "Price" DECIMAL(10,2)
   "Discount" DECIMAL(10,2)
   "Final_Amount" DECIMAL(10,2)
-  "Is_Refunded" BIT
-  "Sale_Date" DATE
+  "Seat_Number" VARCHAR(10)
+  "Check_In_Status" BIT [default: 0]
   "Created_At" DATETIME2 [default: `SYSDATETIME()`]
   "Updated_At" DATETIME2 [default: `SYSDATETIME()`]
 }
 
 Table "Maintenance" {
   "Maintenance_ID" INT [pk]
-  "Aircraft_ID" INT
-  "Maintenance_Type_ID" INT
-  "Technician_ID" INT
-  "Maintenance_Start_Date" DATE
-  "Maintenance_End_Date" DATE
-  "Duration_Hours" INT
+  "Aircraft_ID" INT [not null]
+  "Maintenance_Type_ID" INT [not null]
+  "Technician_ID" INT [not null]
+  "Maintenance_Start_Date" DATETIME [not null]
+  "Maintenance_End_Date" DATETIME
+  "Duration_Hours" DECIMAL(6,2)
   "Cost" DECIMAL(10,2)
   "Issue_Description" NVARCHAR(2000)
+  "Resolution_Notes" NVARCHAR(2000)
+  "Parts_Replaced" NVARCHAR(1000)
 }
 
 Table "Feedback" {
+  "Feedback_ID" INT [pk]
   "Customer_ID" INT
   "Flight_ID" INT
   "Feedback_Date" DATE
   "Rating" INT
   "Comment_Text" NVARCHAR(2000)
+  "AnalyzedTextFeedback" INT
 
   Indexes {
-    (Customer_ID, Flight_ID, Feedback_Date) [pk]
+    (Customer_ID, Flight_ID) [unique]
   }
 }
 
@@ -215,7 +241,8 @@ Table "Cargo" {
   "Declared_Value" DECIMAL(10,2)
   "Is_Lost" BIT
   "Is_Damaged" BIT
-  "Cargo_Date" DATE
+  "Is_Insure" BIT
+  "Cargo_Delivery_Date" DATE
 }
 
 Table "Flight_Crew" {
@@ -233,23 +260,31 @@ Ref:"Airport"."Airport_Code" < "Route"."Origin_Airport_Code"
 
 Ref:"Airport"."Airport_Code" < "Route"."Destination_Airport_Code"
 
+Ref:"Loyalty_Tier"."Loyalty_Tier_ID" < "Customer"."Loyalty_Tier_ID"
+
 Ref:"Employee"."Employee_ID" < "Crew"."Employee_ID"
 
 Ref:"Employee"."Employee_ID" < "Technician"."Employee_ID"
 
 Ref:"Technician"."Technician_ID" < "Technician"."Supervisor_ID"
 
+Ref:"Flight_Status"."Flight_Status_ID" < "Flight"."Flight_Status_ID"
+
 Ref:"Aircraft"."Aircraft_ID" < "Flight"."Aircraft_ID"
 
 Ref:"Route"."Route_ID" < "Flight"."Route_ID"
 
-Ref:"Customer"."Customer_ID" < "Ticket"."Customer_ID"
+Ref:"Customer"."Customer_ID" < "Booking"."Customer_ID"
+
+Ref:"Payment_Method"."Payment_Method_ID" < "Booking"."Payment_Method_ID"
+
+Ref:"Booking_Cancellation_Reason"."Cancellation_ID" < "Booking"."Cancellation_Reason_ID"
+
+Ref:"Booking"."Booking_ID" < "Ticket"."Booking_ID"
 
 Ref:"Flight"."Flight_ID" < "Ticket"."Flight_ID"
 
 Ref:"Class"."Class_ID" < "Ticket"."Class_ID"
-
-Ref:"Payment_Method"."Payment_Method_ID" < "Ticket"."Payment_Method_ID"
 
 Ref:"Aircraft"."Aircraft_ID" < "Maintenance"."Aircraft_ID"
 
