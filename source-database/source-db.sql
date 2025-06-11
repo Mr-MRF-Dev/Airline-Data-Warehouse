@@ -183,7 +183,6 @@ CREATE TABLE Crew
     Crew_ID INT PRIMARY KEY,
     Employee_ID INT,
     Role VARCHAR(50),
-    Rank VARCHAR(50),
     Certification_Level VARCHAR(50),
     Nationality VARCHAR(50),
     License_Number VARCHAR(30),
