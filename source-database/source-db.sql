@@ -330,7 +330,7 @@ CREATE TABLE Feedback
     Feedback_Date DATE,
     Rating INT CHECK (Rating BETWEEN 1 AND 5),
     Comment_Text NVARCHAR(2000),
-    AnalyzedTextFeedback INT CHECK (Rating BETWEEN -5 AND 5),
+    AnalyzedTextFeedback INT CHECK (AnalyzedTextFeedback BETWEEN -5 AND 5),
     UNIQUE (Customer_ID, Flight_ID),
     FOREIGN KEY (Customer_ID) REFERENCES Customer(Customer_ID),
     FOREIGN KEY (Flight_ID) REFERENCES Flight(Flight_ID)
