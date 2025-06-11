@@ -1,8 +1,16 @@
 -- this is the source database for the airline data warehouse
-CREATE DATABASE Airline_Source_DB;
-USE Airline_Source_DB;
-
-
+GO
+USE [master];
+IF DB_ID('AirlineSourceDB') IS NOT NULL
+BEGIN
+	ALTER DATABASE AirlineSourceDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+	DROP DATABASE AirlineSourceDB;
+END;
+GO
+CREATE DATABASE AirlineSourceDB;
+GO
+USE AirlineSourceDB;
+GO
 
 CREATE TABLE Aircraft
 (

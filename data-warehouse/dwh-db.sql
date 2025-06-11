@@ -1,10 +1,23 @@
 -- this file is data ware house, have facts and dimensions
-CREATE DATABASE Airline_DW;
-USE Airline_DW;
+GO
+USE [master];
+IF DB_ID('AirlineDWH') IS NOT NULL
+BEGIN
+    ALTER DATABASE AirlineDWH SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE AirlineDWH;
+END;
+GO
+CREATE DATABASE AirlineDWH;
+GO
+USE AirlineDWH;
+GO
+
+
 
 -- ==========================================================
 -- ==================    All Dimensions    ==================
 -- ==========================================================
+
 
 
 -- Time Dim
