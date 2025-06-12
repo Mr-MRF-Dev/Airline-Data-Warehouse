@@ -428,6 +428,19 @@ CREATE TABLE Dim_Booking_Cancellation_Reason
 
 
 
+-- the Ticket Status Dim
+-- all fields using SCD 1
+DROP TABLE IF EXISTS Dim_Ticket_Status;
+GO
+CREATE TABLE Dim_Ticket_Status
+(
+    Status_ID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Description NVARCHAR(1000)
+);
+
+
+
 -- the Flight Dim
 -- all fields using SCD 1
 DROP TABLE IF EXISTS Dim_Flight;
@@ -549,20 +562,27 @@ GO
 
 
 
--- -- Fact: Ticket Sales (Transactional)
--- CREATE TABLE Fact_Ticket_Sales
--- (
---     Ticket_ID INT PRIMARY KEY,
---     Customer_SK INT REFERENCES Dim_Customer(Customer_SK),
---     Flight_SK INT REFERENCES Dim_Flight(Flight_SK),
---     Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
---     Class_SK INT REFERENCES Dim_Class(Class_SK),
---     Payment_Method_ID INT REFERENCES Dim_Payment_Method(Payment_Method_ID),
---     Price DECIMAL(10,2),
---     Discount DECIMAL(10,2),
---     Final_Amount DECIMAL(10,2),
---     Is_Refunded BIT
--- );
+-- Fact: booking Ticket Sales (Transactional)
+DROP TABLE IF EXISTS Fact_Transaction_Booking_Ticket;
+GO
+CREATE TABLE Fact_Transaction_Booking_Ticket
+(
+    Flight_ID INT REFERENCES Dim_Flight(Flight_ID),
+    Class_ID INT REFERENCES Dim_Ticket_Class(Class_SK),
+    Ticket_Status_ID INT REFERENCES Dim_Ticket_Status(Status_ID),
+    Customer_ID INT REFERENCES Dim_Customer(Customer_SK),
+    Payment_Method_ID INT REFERENCES Dim_Payment_Method(Payment_Method_ID),
+    Cancellation_Reason_ID INT REFERENCES Dim_Booking_Cancellation_Reason(Cancellation_ID),
+    Booking_Created_At DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Booking_Update_At DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Price DECIMAL(10,2),
+    Discount DECIMAL(10,2),
+    Final_Price DECIMAL(10,2),
+    Seat_Number VARCHAR(10),
+    Cancellation_Fee DECIMAL(10,2),
+);
+
+
 
 -- -- Fact: Ticket Sales Snapshot (Periodic)
 -- CREATE TABLE Fact_Ticket_Sales_Snapshot
@@ -599,6 +619,22 @@ GO
 --     Comment_Text NVARCHAR(2000),
 --     PRIMARY KEY (Customer_SK, Flight_SK, Feedback_Date_Key)
 -- );
+
+
+
+
+
+GO
+-- ==========================================================
+-- =============== Data Mart 3 ~ Maintenance ================
+-- ==========================================================
+GO
+
+
+
+
+
+
 
 -- -- Fact: Maintenance Log (Transactional)
 -- CREATE TABLE Fact_Maintenance_Log

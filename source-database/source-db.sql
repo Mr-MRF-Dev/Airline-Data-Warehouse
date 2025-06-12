@@ -1,4 +1,6 @@
 -- this is the source database for the airline data warehouse
+-- online db diagram site: https://dbdiagram.io/d/Airline-Source-DB-682778051227bdcb4ead5698
+-- the file initial source database and all tables
 GO
 USE [master];
 IF DB_ID('AirlineSourceDB') IS NOT NULL
@@ -321,11 +323,41 @@ CREATE TABLE Booking_Cancellation_Reason
 
 
 
+DROP TABLE IF EXISTS Ticket_Status;
+GO
+CREATE TABLE Ticket_Status
+(
+    Status_ID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Description NVARCHAR(1000)
+);
+
+
+
+DROP TABLE IF EXISTS Ticket;
+GO
+CREATE TABLE Ticket
+(
+    Ticket_ID INT PRIMARY KEY,
+    Flight_ID INT,
+    Class_ID INT,
+    Ticket_Status_ID INT,
+    Price DECIMAL(10,2),
+    Discount DECIMAL(10,2),
+    Seat_Number VARCHAR(10),
+    FOREIGN KEY (Flight_ID) REFERENCES Flight(Flight_ID),
+    FOREIGN KEY (Class_ID) REFERENCES Class(Class_ID),
+    FOREIGN KEY (Ticket_Status_ID) REFERENCES Ticket_Status(Status_ID)
+);
+
+
+
 DROP TABLE IF EXISTS Booking;
 GO
 CREATE TABLE Booking
 (
     Booking_ID INT PRIMARY KEY,
+    Ticket_ID INT,
     Customer_ID INT,
     Payment_Method_ID INT,
     Booking_Date DATETIME,
@@ -336,29 +368,8 @@ CREATE TABLE Booking
     Updated_At DATETIME2 DEFAULT SYSDATETIME(),
     FOREIGN KEY (Customer_ID) REFERENCES Customer(Customer_ID),
     FOREIGN KEY (Payment_Method_ID) REFERENCES Payment_Method(Payment_Method_ID),
-    FOREIGN KEY (Cancellation_Reason_ID) REFERENCES Booking_Cancellation_Reason(Cancellation_ID)
-);
-
-
-
-DROP TABLE IF EXISTS Ticket;
-GO
-CREATE TABLE Ticket
-(
-    Ticket_ID INT PRIMARY KEY,
-    Booking_ID INT,
-    Flight_ID INT,
-    Class_ID INT,
-    Price DECIMAL(10,2),
-    Discount DECIMAL(10,2),
-    Final_Amount DECIMAL(10,2),
-    Seat_Number VARCHAR(10),
-    Check_In_Status BIT DEFAULT 0,
-    Created_At DATETIME2 DEFAULT SYSDATETIME(),
-    Updated_At DATETIME2 DEFAULT SYSDATETIME(),
-    FOREIGN KEY (Booking_ID) REFERENCES Booking(Booking_ID),
-    FOREIGN KEY (Flight_ID) REFERENCES Flight(Flight_ID),
-    FOREIGN KEY (Class_ID) REFERENCES Class(Class_ID)
+    FOREIGN KEY (Cancellation_Reason_ID) REFERENCES Booking_Cancellation_Reason(Cancellation_ID),
+    FOREIGN KEY (Ticket_ID) REFERENCES Ticket(Ticket_ID)
 );
 
 

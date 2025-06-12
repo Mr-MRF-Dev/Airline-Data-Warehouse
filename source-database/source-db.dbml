@@ -192,28 +192,31 @@ Table "Booking_Cancellation_Reason" {
   "Description" NVARCHAR(1000)
 }
 
+Table "Ticket_Status" {
+  "Status_ID" INT [pk]
+  "Name" VARCHAR(50)
+  "Description" NVARCHAR(1000)
+}
+
+Table "Ticket" {
+  "Ticket_ID" INT [pk]
+  "Flight_ID" INT
+  "Class_ID" INT
+  "Ticket_Status_ID" INT
+  "Price" DECIMAL(10,2)
+  "Discount" DECIMAL(10,2)
+  "Seat_Number" VARCHAR(10)
+}
+
 Table "Booking" {
   "Booking_ID" INT [pk]
+  "Ticket_ID" INT
   "Customer_ID" INT
   "Payment_Method_ID" INT
   "Booking_Date" DATETIME
   "Total_Amount" DECIMAL(10,2)
   "Cancellation_Reason_ID" INT
   "Cancellation_Fee" DECIMAL(10,2)
-  "Created_At" DATETIME2 [default: `SYSDATETIME()`]
-  "Updated_At" DATETIME2 [default: `SYSDATETIME()`]
-}
-
-Table "Ticket" {
-  "Ticket_ID" INT [pk]
-  "Booking_ID" INT
-  "Flight_ID" INT
-  "Class_ID" INT
-  "Price" DECIMAL(10,2)
-  "Discount" DECIMAL(10,2)
-  "Final_Amount" DECIMAL(10,2)
-  "Seat_Number" VARCHAR(10)
-  "Check_In_Status" BIT [default: 0]
   "Created_At" DATETIME2 [default: `SYSDATETIME()`]
   "Updated_At" DATETIME2 [default: `SYSDATETIME()`]
 }
@@ -299,17 +302,19 @@ Ref:"Aircraft"."Aircraft_ID" < "Flight"."Aircraft_ID"
 
 Ref:"Route"."Route_ID" < "Flight"."Route_ID"
 
+Ref:"Flight"."Flight_ID" < "Ticket"."Flight_ID"
+
+Ref:"Class"."Class_ID" < "Ticket"."Class_ID"
+
+Ref:"Ticket_Status"."Status_ID" < "Ticket"."Ticket_Status_ID"
+
 Ref:"Customer"."Customer_ID" < "Booking"."Customer_ID"
 
 Ref:"Payment_Method"."Payment_Method_ID" < "Booking"."Payment_Method_ID"
 
 Ref:"Booking_Cancellation_Reason"."Cancellation_ID" < "Booking"."Cancellation_Reason_ID"
 
-Ref:"Booking"."Booking_ID" < "Ticket"."Booking_ID"
-
-Ref:"Flight"."Flight_ID" < "Ticket"."Flight_ID"
-
-Ref:"Class"."Class_ID" < "Ticket"."Class_ID"
+Ref:"Ticket"."Ticket_ID" < "Booking"."Ticket_ID"
 
 Ref:"Aircraft"."Aircraft_ID" < "Maintenance"."Aircraft_ID"
 
