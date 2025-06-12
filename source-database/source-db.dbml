@@ -117,11 +117,24 @@ Table "Employee" {
   "Emergency_Contact" VARCHAR(100)
 }
 
+Table "Crew_Role_Type" {
+  "Role_Type_ID" INT [pk]
+  "Role_Type_Name" VARCHAR(50) [not null]
+  "Description" NVARCHAR(500)
+}
+
+Table "Crew_Role" {
+  "Crew_Role_ID" INT [pk]
+  "Crew_Role_Type_ID" INT [not null]
+  "Role_Name" VARCHAR(50) [not null]
+  "Description" NVARCHAR(500)
+  "Basic_Fee_Per_Hour" DECIMAL(10,2) [not null]
+}
+
 Table "Crew" {
   "Crew_ID" INT [pk]
   "Employee_ID" INT
-  "Role" VARCHAR(50)
-  "Rank" VARCHAR(50)
+  "Crew_Role_Type_ID" INT
   "Certification_Level" VARCHAR(50)
   "Nationality" VARCHAR(50)
   "License_Number" VARCHAR(30)
@@ -167,7 +180,9 @@ Table "Flight" {
   "Actual_Departure" DATETIME
   "Actual_Arrival" DATETIME
   "Passenger_Count" INT
-  "Revenue" DECIMAL(10,2)
+  "Revenue" DECIMAL(15,2)
+  "Fuel_Cost" DECIMAL(15,2)
+  "Service_Cost" DECIMAL(15,2)
   "Flight_Status_ID" INT
 }
 
@@ -219,7 +234,7 @@ Table "Maintenance" {
 
 Table "Feedback" {
   "Feedback_ID" INT [pk]
-  "Customer_ID" INT
+  "Ticket_ID" INT
   "Flight_ID" INT
   "Feedback_Date" DATE
   "Rating" INT
@@ -227,13 +242,13 @@ Table "Feedback" {
   "AnalyzedTextFeedback" INT
 
   Indexes {
-    (Customer_ID, Flight_ID) [unique]
+    (Ticket_ID, Flight_ID) [unique]
   }
 }
 
 Table "Cargo" {
   "Cargo_ID" INT [pk]
-  "Customer_ID" INT
+  "Ticket_ID" INT
   "Flight_ID" INT
   "Cargo_Type_ID" INT
   "Weight_KG" DECIMAL(10,2)
@@ -248,8 +263,14 @@ Table "Cargo" {
 Table "Flight_Crew" {
   "Flight_ID" INT
   "Crew_ID" INT
+  "Crew_Role_ID" INT
   "Assignment_Date" DATE
-  "Role" VARCHAR(50)
+  "Duration_Hours" DECIMAL(6,2)
+  "Hourly_Fee" DECIMAL(8,2)
+  "Bonus" DECIMAL(10,2)
+  "Start_Time" DATETIME
+  "End_Time" DATETIME
+  "Rating" INT
 
   Indexes {
     (Flight_ID, Crew_ID) [pk]
@@ -262,7 +283,11 @@ Ref:"Airport"."Airport_Code" < "Route"."Destination_Airport_Code"
 
 Ref:"Loyalty_Tier"."Loyalty_Tier_ID" < "Customer"."Loyalty_Tier_ID"
 
+Ref:"Crew_Role_Type"."Role_Type_ID" < "Crew_Role"."Crew_Role_Type_ID"
+
 Ref:"Employee"."Employee_ID" < "Crew"."Employee_ID"
+
+Ref:"Crew_Role_Type"."Role_Type_ID" < "Crew"."Crew_Role_Type_ID"
 
 Ref:"Employee"."Employee_ID" < "Technician"."Employee_ID"
 
@@ -292,11 +317,11 @@ Ref:"Maintenance_Type"."Maintenance_Type_ID" < "Maintenance"."Maintenance_Type_I
 
 Ref:"Technician"."Technician_ID" < "Maintenance"."Technician_ID"
 
-Ref:"Customer"."Customer_ID" < "Feedback"."Customer_ID"
+Ref:"Ticket"."Ticket_ID" < "Feedback"."Ticket_ID"
 
 Ref:"Flight"."Flight_ID" < "Feedback"."Flight_ID"
 
-Ref:"Customer"."Customer_ID" < "Cargo"."Customer_ID"
+Ref:"Ticket"."Ticket_ID" < "Cargo"."Ticket_ID"
 
 Ref:"Flight"."Flight_ID" < "Cargo"."Flight_ID"
 
@@ -305,3 +330,5 @@ Ref:"Cargo_Type"."Cargo_Type_ID" < "Cargo"."Cargo_Type_ID"
 Ref:"Flight"."Flight_ID" < "Flight_Crew"."Flight_ID"
 
 Ref:"Crew"."Crew_ID" < "Flight_Crew"."Crew_ID"
+
+Ref:"Crew_Role"."Crew_Role_ID" < "Flight_Crew"."Crew_Role_ID"

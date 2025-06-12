@@ -390,14 +390,14 @@ GO
 CREATE TABLE Feedback
 (
     Feedback_ID INT PRIMARY KEY,
-    Customer_ID INT,
+    Ticket_ID INT,
     Flight_ID INT,
     Feedback_Date DATE,
     Rating INT CHECK (Rating BETWEEN 1 AND 5),
     Comment_Text NVARCHAR(2000),
     AnalyzedTextFeedback INT CHECK (AnalyzedTextFeedback BETWEEN -5 AND 5),
-    UNIQUE (Customer_ID, Flight_ID),
-    FOREIGN KEY (Customer_ID) REFERENCES Customer(Customer_ID),
+    UNIQUE (Ticket_ID, Flight_ID),
+    FOREIGN KEY (Ticket_ID) REFERENCES Ticket(Ticket_ID),
     FOREIGN KEY (Flight_ID) REFERENCES Flight(Flight_ID)
 );
 
@@ -408,7 +408,7 @@ GO
 CREATE TABLE Cargo
 (
     Cargo_ID INT PRIMARY KEY,
-    Customer_ID INT,
+    Ticket_ID INT,
     Flight_ID INT,
     Cargo_Type_ID INT,
     Weight_KG DECIMAL(10,2),
@@ -418,7 +418,7 @@ CREATE TABLE Cargo
     Is_Damaged BIT,
     Is_Insure BIT,
     Cargo_Delivery_Date DATE,
-    FOREIGN KEY (Customer_ID) REFERENCES Customer(Customer_ID),
+    FOREIGN KEY (Ticket_ID) REFERENCES Ticket(Ticket_ID),
     FOREIGN KEY (Flight_ID) REFERENCES Flight(Flight_ID),
     FOREIGN KEY (Cargo_Type_ID) REFERENCES Cargo_Type(Cargo_Type_ID)
 );
