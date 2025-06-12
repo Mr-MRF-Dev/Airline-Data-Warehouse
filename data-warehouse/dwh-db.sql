@@ -581,7 +581,7 @@ CREATE TABLE Fact_Transaction_Booking_Ticket
     Cancellation_Fee DECIMAL(10,2),
     -- feedback information
     Feedback_Rating INT ,
-    AnalyzedTextFeedback INT,
+    Analyzed_Text_Feedback INT,
     -- additional fields (not major & part of the fact table, just for saving the data)
     Ticket_ID INT,
     Booking_ID INT,
