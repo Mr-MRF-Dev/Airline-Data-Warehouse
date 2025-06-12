@@ -483,6 +483,24 @@ CREATE TABLE Fact_Transaction_Crew_Flight_Assignment
 
 
 
+-- Fact Routing Flight Operations Snapshot (Periodic)
+CREATE TABLE Fact_Periodic_Route_Flight_Snapshot_Monthly
+(
+    Snapshot_DateTime DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Route_ID INT REFERENCES Dim_Route(Route_ID),
+    Departure_Airport_ID INT REFERENCES Dim_Airport(Airport_ID),
+    Arrival_Airport_ID INT REFERENCES Dim_Airport(Airport_ID),
+    Total_Flights_Count INT,
+    Total_Departure_Delay_Minutes INT,
+    Total_Arrival_Delay_Minutes INT,
+    Total_Flight_Duration_Minutes INT,
+    Total_Revenue DECIMAL(15,2),
+    Total_Fuel_Cost DECIMAL(15,2),
+    Total_Crew_Cost DECIMAL(15,2),
+    Total_Service_Cost DECIMAL(15,2),
+    Total_Crew_Count INT,
+    Total_Passenger_Count INT
+);
 
 
 
