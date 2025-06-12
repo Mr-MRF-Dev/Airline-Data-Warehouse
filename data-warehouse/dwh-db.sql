@@ -14,9 +14,11 @@ GO
 
 
 
+GO
 -- ==========================================================
 -- ==================    All Dimensions    ==================
 -- ==========================================================
+GO
 
 
 
@@ -231,7 +233,7 @@ CREATE TABLE Dim_Ticket_Class
     Baggage_Allowance_KG DECIMAL(5,2) NOT NULL,
     Carry_On_Allowance_KG DECIMAL(5,2) NOT NULL,
     -- Status information
-    -- SCD 2, track the route activity
+    -- SCD 2, track the ticket class activity
     Is_Active BIT,
     Effective_Start_Date DATE,
     Effective_End_Date DATE,
@@ -253,7 +255,7 @@ CREATE TABLE Dim_Payment_Method
     Provider_Name VARCHAR(50),
     Processing_Fee DECIMAL(5,2),
     Currency VARCHAR(3),
-    -- SCD 2, track the route activity
+    -- SCD 2, track the  payment method activity
     Is_Active BIT,
     Effective_Start_Date DATE,
     Effective_End_Date DATE,
@@ -276,12 +278,30 @@ CREATE TABLE Dim_Cargo_Type
 
 
 
+-- the Crew Role Dim - Hierarchical Crew Role
+-- all fields using SCD 1
+CREATE TABLE Dim_Crew_Role
+(
+    Crew_Role_ID INT PRIMARY KEY,
+    Role_Name VARCHAR(50) NOT NULL,
+    Role_Description NVARCHAR(500),
+    Basic_Fee_Per_Hour DECIMAL(10,2) NOT NULL,
+    Role_Type_ID INT,
+    Role_Type_Name VARCHAR(50) NOT NULL,
+    Role_Type_Description NVARCHAR(500),
+);
+
+
+
 -- the Crew Dim
 -- all fields using SCD 1 + two field SCD 3
 CREATE TABLE Dim_Crew
 (
     Crew_ID INT PRIMARY KEY,
     Employee_ID INT,
+    Role_Type_ID INT,
+    Role_Type_Name VARCHAR (50),
+    -- information
     First_Name VARCHAR(50),
     Last_Name VARCHAR(50),
     Email VARCHAR(100),
@@ -298,7 +318,6 @@ CREATE TABLE Dim_Crew
     Current_Emergency_Contact VARCHAR(100),
     Effective_Emergency_Contact DATE,
     -- end of Emergency Contact SCD 3
-    Role VARCHAR (50),
     Certification_Level VARCHAR (50),
     Nationality VARCHAR (50),
     License_Number VARCHAR (30),
@@ -387,14 +406,17 @@ CREATE TABLE Dim_Flight
     -- flight information
     Flight_ID INT PRIMARY KEY,
     Flight_Number VARCHAR(10),
-    Flight_Date DATETIME,
+    Scheduled_Departure DATETIME,
+    Scheduled_Arrival DATETIME,
+    Actual_Departure DATETIME,
+    Actual_Arrival DATETIME,
     -- route information
     Aircraft_ID INT,
     Aircraft_Model VARCHAR(50),
     Route_ID INT,
     Origin_Airport_Name VARCHAR(10),
     Destination_Airport_Name VARCHAR(10),
-    -- flight crew information
+    -- flight primary crew information
     Flight_Crew_Captain_ID INT,
     Flight_Crew_Captain_Name VARCHAR(100),
     Flight_Crew_Copilot_ID INT,
@@ -405,15 +427,11 @@ CREATE TABLE Dim_Flight
     Flight_Crew_Security_Name VARCHAR(100),
     Flight_Status_ID INT,
     Flight_Status VARCHAR(50),
-    -- Total_Crew_Members INT,
-    -- Scheduled_Departure DATETIME,
-    -- Scheduled_Arrival DATETIME,
-    -- Actual_Departure DATETIME,
-    -- Actual_Arrival DATETIME,
 );
 
 
 
+GO
 -- ==========================================================
 -- ================== Data Mart 1 ~ Flight ==================
 -- ==========================================================
@@ -421,38 +439,65 @@ GO
 
 
 
--- -- ========== Flight Dimension (SCD1) ==========
--- -- Fact: Flight Operations (Transactional)
--- CREATE TABLE Fact_Flight_Operations
--- (
---     Flight_SK INT PRIMARY KEY,
---     Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
---     Aircraft_SK INT REFERENCES Dim_Aircraft(Aircraft_SK),
---     Route_SK INT REFERENCES Dim_Route(Route_SK),
---     Schedule_SK INT REFERENCES Dim_Schedule(Schedule_SK),
---     Departure_Airport_SK INT REFERENCES Dim_Airport(Airport_SK),
---     Arrival_Airport_SK INT REFERENCES Dim_Airport(Airport_SK),
---     Departure_Delay_Minutes INT,
---     Arrival_Delay_Minutes INT,
---     Passenger_Count INT,
---     Revenue DECIMAL(10,2),
---     Cancelled BIT,
---     Cancellation_Reason_ID INT REFERENCES Dim_Cancellation_Reason(Cancellation_Reason_ID),
---     CONSTRAINT FK_Fact_Flight_Operations_Flight_SK FOREIGN KEY (Flight_SK) REFERENCES Dim_Flight(Flight_SK)
--- );
+-- Fact Flight Operations (Accumulating)
+CREATE TABLE Fact_Accumulate_Flight_Operations
+(
+    Flight_ID INT REFERENCES Dim_Flight(Flight_ID),
+    Aircraft_ID INT REFERENCES Dim_Aircraft(Aircraft_ID),
+    Route_ID INT REFERENCES Dim_Route(Route_ID),
+    Departure_Airport_ID INT REFERENCES Dim_Airport(Airport_ID),
+    Arrival_Airport_ID INT REFERENCES Dim_Airport(Airport_ID),
+    Flight_Status_ID INT REFERENCES Dim_Flight_Status(Flight_Status_ID),
+    Scheduled_Departure DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Scheduled_Arrival DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Actual_Departure DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Actual_Arrival DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Departure_Delay_Minutes INT,
+    Arrival_Delay_Minutes INT,
+    Flight_Duration_Minutes INT,
+    Revenue DECIMAL(15,2),
+    Fuel_Cost DECIMAL(15,2),
+    Crew_Cost DECIMAL(15,2),
+    Service_Cost DECIMAL(15,2),
+    Crew_Count INT,
+    Passenger_Count INT,
+);
 
--- -- Fact: Flight Snapshot (Periodic)
--- CREATE TABLE Fact_Flight_Snapshot_Monthly
--- (
---     Snapshot_ID INT PRIMARY KEY,
---     Snapshot_Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
---     Aircraft_SK INT REFERENCES Dim_Aircraft(Aircraft_SK),
---     Route_SK INT REFERENCES Dim_Route(Route_SK),
---     Total_Flights INT,
---     Avg_Passenger_Count INT,
---     Total_Revenue DECIMAL(12,2),
---     Avg_Delay_Minutes DECIMAL(10,2)
--- );
+
+
+-- Fact Crew Flight (Transactional)
+CREATE TABLE Fact_Transaction_Crew_Flight_Assignment
+(
+    Flight_ID INT REFERENCES Dim_Flight(Flight_ID),
+    Crew_ID INT REFERENCES Dim_Crew(Crew_ID),
+    Crew_Role_ID INT REFERENCES Dim_Crew_Role(Crew_Role_ID),
+    Start_Time DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    End_Time DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Duration_Hours DECIMAL(6,2),
+    Hourly_Fee DECIMAL(8,2),
+    Total_Fee DECIMAL(10,2),
+    Bonus DECIMAL(10,2),
+    Total_Pay DECIMAL(10,2),
+    Rating INT,
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- -- Fact: Flight Lifecycle (Accumulating)
 -- CREATE TABLE Fact_Flight_Lifecycle

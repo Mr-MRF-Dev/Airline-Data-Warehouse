@@ -178,17 +178,39 @@ CREATE TABLE Employee
 
 
 
+CREATE TABLE Crew_Role_Type
+(
+    Role_Type_ID INT PRIMARY KEY,
+    Role_Type_Name VARCHAR(50) NOT NULL,
+    Description NVARCHAR(500),
+);
+
+
+
+CREATE TABLE Crew_Role
+(
+    Crew_Role_ID INT PRIMARY KEY,
+    Crew_Role_Type_ID INT NOT NULL,
+    Role_Name VARCHAR(50) NOT NULL,
+    Description NVARCHAR(500),
+    Basic_Fee_Per_Hour DECIMAL(10,2) NOT NULL
+        FOREIGN KEY (Crew_Role_Type_ID) REFERENCES Crew_Role_Type(Role_Type_ID)
+);
+
+
+
 CREATE TABLE Crew
 (
     Crew_ID INT PRIMARY KEY,
     Employee_ID INT,
-    Role VARCHAR(50),
+    Crew_Role_Type_ID INT,
     Certification_Level VARCHAR(50),
     Nationality VARCHAR(50),
     License_Number VARCHAR(30),
     License_Expiry_Date DATE,
     Training_Hours INT,
-    FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID)
+    FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID),
+    FOREIGN KEY (Crew_Role_Type_ID) REFERENCES Crew_Role_Type(Crew_Role_Type_ID)
 );
 
 
@@ -245,7 +267,9 @@ CREATE TABLE Flight
     Actual_Departure DATETIME,
     Actual_Arrival DATETIME,
     Passenger_Count INT,
-    Revenue DECIMAL(10,2),
+    Revenue DECIMAL(15,2),
+    Fuel_Cost DECIMAL(15,2),
+    Service_Cost DECIMAL(15,2),
     Flight_Status_ID INT,
     FOREIGN KEY (Flight_Status_ID) REFERENCES Flight_Status(Flight_Status_ID),
     FOREIGN KEY (Aircraft_ID) REFERENCES Aircraft(Aircraft_ID),
@@ -361,10 +385,16 @@ CREATE TABLE Flight_Crew
 (
     Flight_ID INT,
     Crew_ID INT,
+    Crew_Role_ID INT,
     Assignment_Date DATE,
     Duration_Hours DECIMAL(6,2),
     Hourly_Fee DECIMAL(8,2),
+    Bonus DECIMAL(10,2),
+    Start_Time DATETIME,
+    End_Time DATETIME,
+    Rating INT CHECK (Rating BETWEEN 1 AND 5),
     PRIMARY KEY (Flight_ID, Crew_ID),
     FOREIGN KEY (Flight_ID) REFERENCES Flight(Flight_ID),
-    FOREIGN KEY (Crew_ID) REFERENCES Crew(Crew_ID)
+    FOREIGN KEY (Crew_ID) REFERENCES Crew(Crew_ID),
+    FOREIGN KEY (Crew_Role_ID) REFERENCES Crew_Role(Crew_Role_ID)
 );
