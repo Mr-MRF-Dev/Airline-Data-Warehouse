@@ -343,105 +343,85 @@ CREATE TABLE Dim_Technician
 
 
 
+-- the Maintenance Type Dim
+-- all fields using SCD 1
+CREATE TABLE Dim_Maintenance_Type
+(
+    Maintenance_Type_ID INT PRIMARY KEY,
+    Type_Name VARCHAR(100),
+    Description NVARCHAR(1000),
+    Tools_Required NVARCHAR(1000),
+    Estimated_Duration_Hours INT,
+    FAA_Required BIT
+);
+
+
+
+-- the Flight Status Dim
+-- all fields using SCD 1
+CREATE TABLE Dim_Flight_Status
+(
+    Flight_Status_ID INT PRIMARY KEY,
+    Status_Name VARCHAR(50),
+    Description NVARCHAR(200),
+);
+
+
+
+-- the Booking Cancellation Reason Dim
+-- all fields using SCD 1
+CREATE TABLE Dim_Booking_Cancellation_Reason
+(
+    Cancellation_ID INT PRIMARY KEY,
+    Reason NVARCHAR(200),
+    Description NVARCHAR(1000)
+);
 
 
 
 
+-- the Flight Dim
+-- all fields using SCD 1
+CREATE TABLE Dim_Flight
+(
+    -- flight information
+    Flight_ID INT PRIMARY KEY,
+    Flight_Number VARCHAR(10),
+    Flight_Date DATETIME,
+    -- route information
+    Aircraft_ID INT,
+    Aircraft_Model VARCHAR(50),
+    Route_ID INT,
+    Origin_Airport_Name VARCHAR(10),
+    Destination_Airport_Name VARCHAR(10),
+    -- flight crew information
+    Flight_Crew_Captain_ID INT,
+    Flight_Crew_Captain_Name VARCHAR(100),
+    Flight_Crew_Copilot_ID INT,
+    Flight_Crew_Copilot_Name VARCHAR(100),
+    Flight_Crew_Senior_Attendant_ID INT,
+    Flight_Crew_Senior_Attendant_Name VARCHAR(100),
+    Flight_Crew_Security_ID INT,
+    Flight_Crew_Security_Name VARCHAR(100),
+    Flight_Status_ID INT,
+    Flight_Status VARCHAR(50),
+    -- Total_Crew_Members INT,
+    -- Scheduled_Departure DATETIME,
+    -- Scheduled_Arrival DATETIME,
+    -- Actual_Departure DATETIME,
+    -- Actual_Arrival DATETIME,
+);
 
 
 
--- -- ========== Cancellation Reason Dimension ==========
--- CREATE TABLE Dim_Cancellation_Reason
--- (
---     Cancellation_Reason_ID INT PRIMARY KEY,
---     Reason_Code VARCHAR(20),
---     Reason_Description NVARCHAR(255),
---     Category VARCHAR(50),
---     Is_Temporary BIT
--- );
+-- ==========================================================
+-- ================== Data Mart 1 ~ Flight ==================
+-- ==========================================================
+GO
+
 
 
 -- -- ========== Flight Dimension (SCD1) ==========
--- CREATE TABLE Dim_Flight
--- (
---     Flight_SK INT PRIMARY KEY,
---     Flight_ID INT,
---     Flight_Number VARCHAR(10),
---     Route_SK INT,
---     Schedule_SK INT
--- );
-
--- -- Technician (SCD1)
--- CREATE TABLE Dim_Technician
--- (
---     Technician_ID INT PRIMARY KEY,
---     Employee_ID INT,
---     First_Name VARCHAR(50),
---     Last_Name VARCHAR(50),
---     Email VARCHAR(100),
---     Phone_Number VARCHAR(20),
---     Birth_Date DATE,
---     Hire_Date DATE,
---     Exit_Date DATE NULL,
---     Is_Active BIT DEFAULT 1,
---     Emergency_Contact VARCHAR(100) NULL,
---     Specialty VARCHAR(100),
---     Employee_ID INT,
---     Specialty VARCHAR(100),
---     Certification_Level VARCHAR(50),
---     License_Number VARCHAR(30),
---     License_Expiry_Date DATE,
---     Training_Hours INT,
---     Years_Experience INT,
---     Supervisor_ID INT NULL
--- );
-
--- -- Maintenance Type (SCD1)
--- CREATE TABLE Dim_Maintenance_Type
--- (
---     Maintenance_Type_ID INT PRIMARY KEY,
---     Type_Name VARCHAR(100),
---     Description NVARCHAR(1000),
---     Tools_Required NVARCHAR(1000)
--- );
-
--- -- Customer (SCD2)
--- CREATE TABLE Dim_Customer
--- (
---     Customer_SK INT PRIMARY KEY,
---     Customer_ID INT,
---     First_Name VARCHAR(50),
---     Last_Name VARCHAR(50),
---     Email VARCHAR(100),
---     Gender CHAR(1),
---     Birth_Date DATE,
---     Country VARCHAR(50),
---     Loyalty_Tier VARCHAR(50),
---     Entry_Date DATE,
---     Expiry_Date DATE,
---     Is_Current BIT
--- );
-
--- -- Class (SCD2)
--- CREATE TABLE Dim_Class
--- (
---     Class_SK INT PRIMARY KEY,
---     Class_ID INT,
---     Class_Name VARCHAR(50),
---     Services NVARCHAR(1000),
---     Entry_Date DATE,
---     Expiry_Date DATE,
---     Is_Current BIT
--- );
-
--- -- Payment Method (SCD1)
--- CREATE TABLE Dim_Payment_Method
--- (
---     Payment_Method_ID INT PRIMARY KEY,
---     Method_Name VARCHAR(50),
---     Provider_Name VARCHAR(50)
--- );
-
 -- -- Fact: Flight Operations (Transactional)
 -- CREATE TABLE Fact_Flight_Operations
 -- (
@@ -490,7 +470,7 @@ CREATE TABLE Dim_Technician
 --     CONSTRAINT FK_Fact_Flight_Lifecycle_Flight_SK FOREIGN KEY (Flight_SK) REFERENCES Dim_Flight(Flight_SK)
 -- );
 
--- -- Factless: Route Execution
+-- -- Fact less: Route Execution
 -- CREATE TABLE Fact_Route_Execution
 -- (
 --     Route_SK INT REFERENCES Dim_Route(Route_SK),
@@ -529,7 +509,7 @@ CREATE TABLE Dim_Technician
 -- CREATE TABLE Fact_Customer_Lifecycle
 -- (
 --     Customer_SK INT PRIMARY KEY,
---     Signup_Date DATE,
+--     Sign_up_Date DATE,
 --     First_Booking_Date DATE,
 --     Last_Booking_Date DATE,
 --     Loyalty_Change_Date DATE,
@@ -539,7 +519,7 @@ CREATE TABLE Dim_Technician
 --     CONSTRAINT FK_Fact_Customer_Lifecycle_Customer_SK FOREIGN KEY (Customer_SK) REFERENCES Dim_Customer(Customer_SK)
 -- );
 
--- -- Factless: Customer Feedback
+-- -- Fact less: Customer Feedback
 -- CREATE TABLE Fact_Customer_Feedback
 -- (
 --     Customer_SK INT REFERENCES Dim_Customer(Customer_SK),
@@ -592,7 +572,7 @@ CREATE TABLE Dim_Technician
 --     CONSTRAINT FK_Fact_Aircraft_Lifecycle_Aircraft_SK FOREIGN KEY (Aircraft_SK) REFERENCES Dim_Aircraft(Aircraft_SK)
 -- );
 
--- -- Factless: Health Checks
+-- -- Fact less: Health Checks
 -- CREATE TABLE Fact_Health_Checks
 -- (
 --     Aircraft_SK INT REFERENCES Dim_Aircraft(Aircraft_SK),

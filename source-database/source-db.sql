@@ -244,8 +244,6 @@ CREATE TABLE Flight
     Scheduled_Arrival DATETIME,
     Actual_Departure DATETIME,
     Actual_Arrival DATETIME,
-    -- Departure_Delay_Minutes INT,
-    -- Arrival_Delay_Minutes INT,
     Passenger_Count INT,
     Revenue DECIMAL(10,2),
     Flight_Status_ID INT,
@@ -364,7 +362,8 @@ CREATE TABLE Flight_Crew
     Flight_ID INT,
     Crew_ID INT,
     Assignment_Date DATE,
-    Role VARCHAR(50),
+    Duration_Hours DECIMAL(6,2),
+    Hourly_Fee DECIMAL(8,2),
     PRIMARY KEY (Flight_ID, Crew_ID),
     FOREIGN KEY (Flight_ID) REFERENCES Flight(Flight_ID),
     FOREIGN KEY (Crew_ID) REFERENCES Crew(Crew_ID)
