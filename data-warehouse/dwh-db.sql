@@ -578,8 +578,11 @@ CREATE TABLE Fact_Transaction_Booking_Ticket
     Price DECIMAL(10,2),
     Discount DECIMAL(10,2),
     Final_Price DECIMAL(10,2),
-    Seat_Number VARCHAR(10),
     Cancellation_Fee DECIMAL(10,2),
+    -- additional fields (not major & part of the fact table, just for saving the data)
+    Ticket_ID INT,
+    Booking_ID INT,
+    Seat_Number VARCHAR(10),
 );
 
 
