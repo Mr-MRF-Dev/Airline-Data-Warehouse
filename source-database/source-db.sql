@@ -14,6 +14,8 @@ GO
 
 
 
+DROP TABLE IF EXISTS Aircraft;
+GO
 CREATE TABLE Aircraft
 (
     -- aircraft id and registration
@@ -34,6 +36,8 @@ CREATE TABLE Aircraft
 
 
 
+DROP TABLE IF EXISTS Airport;
+GO
 CREATE TABLE Airport
 (
     -- airport information
@@ -57,6 +61,8 @@ CREATE TABLE Airport
 
 
 
+DROP TABLE IF EXISTS Route;
+GO
 CREATE TABLE Route
 (
     Route_ID INT PRIMARY KEY,
@@ -75,6 +81,8 @@ CREATE TABLE Route
 
 
 
+DROP TABLE IF EXISTS Loyalty_Tier;
+GO
 CREATE TABLE Loyalty_Tier
 (
     Loyalty_Tier_ID INT PRIMARY KEY,
@@ -86,6 +94,8 @@ CREATE TABLE Loyalty_Tier
 
 
 
+DROP TABLE IF EXISTS Customer;
+GO
 CREATE TABLE Customer
 (
     Customer_ID INT PRIMARY KEY,
@@ -118,6 +128,8 @@ CREATE TABLE Customer
 
 
 
+DROP TABLE IF EXISTS Class;
+GO
 CREATE TABLE Class
 (
     Class_ID INT PRIMARY KEY,
@@ -137,6 +149,8 @@ CREATE TABLE Class
 
 
 
+DROP TABLE IF EXISTS Payment_Method;
+GO
 CREATE TABLE Payment_Method
 (
     -- payment method information
@@ -152,6 +166,8 @@ CREATE TABLE Payment_Method
 
 
 
+DROP TABLE IF EXISTS Cargo_Type;
+GO
 CREATE TABLE Cargo_Type
 (
     Cargo_Type_ID INT PRIMARY KEY,
@@ -163,6 +179,8 @@ CREATE TABLE Cargo_Type
 
 
 
+DROP TABLE IF EXISTS Employee;
+GO
 CREATE TABLE Employee
 (
     Employee_ID INT PRIMARY KEY,
@@ -178,6 +196,8 @@ CREATE TABLE Employee
 
 
 
+DROP TABLE IF EXISTS Crew_Role_Type;
+GO
 CREATE TABLE Crew_Role_Type
 (
     Role_Type_ID INT PRIMARY KEY,
@@ -187,6 +207,8 @@ CREATE TABLE Crew_Role_Type
 
 
 
+DROP TABLE IF EXISTS Crew_Role;
+GO
 CREATE TABLE Crew_Role
 (
     Crew_Role_ID INT PRIMARY KEY,
@@ -199,6 +221,8 @@ CREATE TABLE Crew_Role
 
 
 
+DROP TABLE IF EXISTS Crew;
+GO
 CREATE TABLE Crew
 (
     Crew_ID INT PRIMARY KEY,
@@ -210,11 +234,13 @@ CREATE TABLE Crew
     License_Expiry_Date DATE,
     Training_Hours INT,
     FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID),
-    FOREIGN KEY (Crew_Role_Type_ID) REFERENCES Crew_Role_Type(Crew_Role_Type_ID)
+    FOREIGN KEY (Crew_Role_Type_ID) REFERENCES Crew_Role_Type(Role_Type_ID)
 );
 
 
 
+DROP TABLE IF EXISTS Technician;
+GO
 CREATE TABLE Technician
 (
     Technician_ID INT PRIMARY KEY,
@@ -232,6 +258,8 @@ CREATE TABLE Technician
 
 
 
+DROP TABLE IF EXISTS Maintenance_Type;
+GO
 CREATE TABLE Maintenance_Type
 (
     Maintenance_Type_ID INT PRIMARY KEY,
@@ -244,6 +272,8 @@ CREATE TABLE Maintenance_Type
 
 
 
+DROP TABLE IF EXISTS Flight_Status;
+GO
 CREATE TABLE Flight_Status
 (
     Flight_Status_ID INT PRIMARY KEY,
@@ -253,6 +283,8 @@ CREATE TABLE Flight_Status
 
 
 
+DROP TABLE IF EXISTS Flight;
+GO
 CREATE TABLE Flight
 (
     -- flight information
@@ -278,6 +310,8 @@ CREATE TABLE Flight
 
 
 
+DROP TABLE IF EXISTS Booking_Cancellation_Reason;
+GO
 CREATE TABLE Booking_Cancellation_Reason
 (
     Cancellation_ID INT PRIMARY KEY,
@@ -287,6 +321,8 @@ CREATE TABLE Booking_Cancellation_Reason
 
 
 
+DROP TABLE IF EXISTS Booking;
+GO
 CREATE TABLE Booking
 (
     Booking_ID INT PRIMARY KEY,
@@ -305,6 +341,8 @@ CREATE TABLE Booking
 
 
 
+DROP TABLE IF EXISTS Ticket;
+GO
 CREATE TABLE Ticket
 (
     Ticket_ID INT PRIMARY KEY,
@@ -325,6 +363,8 @@ CREATE TABLE Ticket
 
 
 
+DROP TABLE IF EXISTS Maintenance;
+GO
 CREATE TABLE Maintenance
 (
     Maintenance_ID INT PRIMARY KEY,
@@ -345,6 +385,8 @@ CREATE TABLE Maintenance
 
 
 
+DROP TABLE IF EXISTS Feedback;
+GO
 CREATE TABLE Feedback
 (
     Feedback_ID INT PRIMARY KEY,
@@ -361,6 +403,8 @@ CREATE TABLE Feedback
 
 
 
+DROP TABLE IF EXISTS Cargo;
+GO
 CREATE TABLE Cargo
 (
     Cargo_ID INT PRIMARY KEY,
@@ -381,6 +425,8 @@ CREATE TABLE Cargo
 
 
 
+DROP TABLE IF EXISTS Flight_Crew;
+GO
 CREATE TABLE Flight_Crew
 (
     Flight_ID INT,

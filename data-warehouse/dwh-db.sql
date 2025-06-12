@@ -24,6 +24,8 @@ GO
 
 -- Time Dim
 -- all fields using SCD 1
+DROP TABLE IF EXISTS Dim_DateTime;
+GO
 CREATE TABLE Dim_DateTime
 (
     DateTime_ID DATETIME PRIMARY KEY,
@@ -63,6 +65,8 @@ CREATE TABLE Dim_DateTime
 
 -- Aircraft Dim
 -- all fields using SCD Type 1 + one field SCD 2
+DROP TABLE IF EXISTS Dim_Aircraft;
+GO
 CREATE TABLE Dim_Aircraft
 (
     -- aircraft id and registration
@@ -91,6 +95,8 @@ CREATE TABLE Dim_Aircraft
 
 -- Airport Dim
 -- all fields using SCD Type 1 + one field SCD 2
+DROP TABLE IF EXISTS Dim_Airport;
+GO
 CREATE TABLE Dim_Airport
 (
     -- airport information
@@ -123,6 +129,8 @@ CREATE TABLE Dim_Airport
 
 -- Route Dim
 -- all fields using SCD Type 1 + one field SCD 2
+DROP TABLE IF EXISTS Dim_Route;
+GO
 CREATE TABLE Dim_Route
 (
     Route_SK INT PRIMARY KEY,
@@ -149,6 +157,8 @@ CREATE TABLE Dim_Route
 
 -- the Dim Customer Loyalty Tier Dim
 -- all fields using SCD 1 + one field SCD 2
+DROP TABLE IF EXISTS Dim_Customer_Loyalty_Tier;
+GO
 CREATE TABLE Dim_Customer_Loyalty_Tier
 (
     Loyalty_Tier_SK INT PRIMARY KEY,
@@ -168,6 +178,8 @@ CREATE TABLE Dim_Customer_Loyalty_Tier
 
 -- the Customer Dim
 -- all fields using SCD 1 / SCD 2
+DROP TABLE IF EXISTS Dim_Customer;
+GO
 CREATE TABLE Dim_Customer
 (
     Customer_SK INT PRIMARY KEY,
@@ -218,6 +230,8 @@ CREATE TABLE Dim_Customer
 
 -- the Ticket Class Dim
 -- all fields using SCD 1 + one field SCD 2
+DROP TABLE IF EXISTS Dim_Ticket_Class;
+GO
 CREATE TABLE Dim_Ticket_Class
 (
     Class_SK INT PRIMARY KEY,
@@ -245,6 +259,8 @@ CREATE TABLE Dim_Ticket_Class
 
 -- the Payment Method Dim
 -- all fields using SCD 1 + one field SCD 2
+DROP TABLE IF EXISTS Dim_Payment_Method;
+GO
 CREATE TABLE Dim_Payment_Method
 (
     -- payment method information
@@ -267,6 +283,8 @@ CREATE TABLE Dim_Payment_Method
 
 -- the Cargo Type Dim
 -- all fields using SCD 1
+DROP TABLE IF EXISTS Dim_Cargo_Type;
+GO
 CREATE TABLE Dim_Cargo_Type
 (
     Cargo_Type_ID INT PRIMARY KEY,
@@ -280,6 +298,8 @@ CREATE TABLE Dim_Cargo_Type
 
 -- the Crew Role Dim - Hierarchical Crew Role
 -- all fields using SCD 1
+DROP TABLE IF EXISTS Dim_Crew_Role;
+GO
 CREATE TABLE Dim_Crew_Role
 (
     Crew_Role_ID INT PRIMARY KEY,
@@ -295,6 +315,8 @@ CREATE TABLE Dim_Crew_Role
 
 -- the Crew Dim
 -- all fields using SCD 1 + two field SCD 3
+DROP TABLE IF EXISTS Dim_Crew;
+GO
 CREATE TABLE Dim_Crew
 (
     Crew_ID INT PRIMARY KEY,
@@ -329,6 +351,8 @@ CREATE TABLE Dim_Crew
 
 -- the Technician Dim
 -- all fields using SCD 1 + two field SCD 3
+DROP TABLE IF EXISTS Dim_Technician;
+GO
 CREATE TABLE Dim_Technician
 (
     Technician_ID INT PRIMARY KEY,
@@ -364,6 +388,8 @@ CREATE TABLE Dim_Technician
 
 -- the Maintenance Type Dim
 -- all fields using SCD 1
+DROP TABLE IF EXISTS Dim_Maintenance_Type;
+GO
 CREATE TABLE Dim_Maintenance_Type
 (
     Maintenance_Type_ID INT PRIMARY KEY,
@@ -378,6 +404,8 @@ CREATE TABLE Dim_Maintenance_Type
 
 -- the Flight Status Dim
 -- all fields using SCD 1
+DROP TABLE IF EXISTS Dim_Flight_Status;
+GO
 CREATE TABLE Dim_Flight_Status
 (
     Flight_Status_ID INT PRIMARY KEY,
@@ -389,6 +417,8 @@ CREATE TABLE Dim_Flight_Status
 
 -- the Booking Cancellation Reason Dim
 -- all fields using SCD 1
+DROP TABLE IF EXISTS Dim_Booking_Cancellation_Reason;
+GO
 CREATE TABLE Dim_Booking_Cancellation_Reason
 (
     Cancellation_ID INT PRIMARY KEY,
@@ -398,9 +428,10 @@ CREATE TABLE Dim_Booking_Cancellation_Reason
 
 
 
-
 -- the Flight Dim
 -- all fields using SCD 1
+DROP TABLE IF EXISTS Dim_Flight;
+GO
 CREATE TABLE Dim_Flight
 (
     -- flight information
@@ -440,13 +471,15 @@ GO
 
 
 -- Fact Flight Operations (Accumulating)
+DROP TABLE IF EXISTS Fact_Accumulate_Flight_Operations;
+GO
 CREATE TABLE Fact_Accumulate_Flight_Operations
 (
     Flight_ID INT REFERENCES Dim_Flight(Flight_ID),
-    Aircraft_ID INT REFERENCES Dim_Aircraft(Aircraft_ID),
-    Route_ID INT REFERENCES Dim_Route(Route_ID),
-    Departure_Airport_ID INT REFERENCES Dim_Airport(Airport_ID),
-    Arrival_Airport_ID INT REFERENCES Dim_Airport(Airport_ID),
+    Aircraft_ID INT REFERENCES Dim_Aircraft(Aircraft_SK),
+    Route_ID INT REFERENCES Dim_Route(Route_SK),
+    Departure_Airport_ID INT REFERENCES Dim_Airport(Airport_SK),
+    Arrival_Airport_ID INT REFERENCES Dim_Airport(Airport_SK),
     Flight_Status_ID INT REFERENCES Dim_Flight_Status(Flight_Status_ID),
     Scheduled_Departure DATETIME REFERENCES Dim_DateTime(DateTime_ID),
     Scheduled_Arrival DATETIME REFERENCES Dim_DateTime(DateTime_ID),
@@ -466,6 +499,8 @@ CREATE TABLE Fact_Accumulate_Flight_Operations
 
 
 -- Fact Crew Flight (Transactional)
+DROP TABLE IF EXISTS Fact_Transaction_Crew_Flight_Assignment;
+GO
 CREATE TABLE Fact_Transaction_Crew_Flight_Assignment
 (
     Flight_ID INT REFERENCES Dim_Flight(Flight_ID),
@@ -484,12 +519,14 @@ CREATE TABLE Fact_Transaction_Crew_Flight_Assignment
 
 
 -- Fact Routing Flight Operations Snapshot (Periodic)
+DROP TABLE IF EXISTS Fact_Periodic_Route_Flight_Snapshot_Monthly;
+GO
 CREATE TABLE Fact_Periodic_Route_Flight_Snapshot_Monthly
 (
     Snapshot_DateTime DATETIME REFERENCES Dim_DateTime(DateTime_ID),
-    Route_ID INT REFERENCES Dim_Route(Route_ID),
-    Departure_Airport_ID INT REFERENCES Dim_Airport(Airport_ID),
-    Arrival_Airport_ID INT REFERENCES Dim_Airport(Airport_ID),
+    Route_ID INT REFERENCES Dim_Route(Route_SK),
+    Departure_Airport_ID INT REFERENCES Dim_Airport(Airport_SK),
+    Arrival_Airport_ID INT REFERENCES Dim_Airport(Airport_SK),
     Total_Flights_Count INT,
     Total_Departure_Delay_Minutes INT,
     Total_Arrival_Delay_Minutes INT,
@@ -504,43 +541,13 @@ CREATE TABLE Fact_Periodic_Route_Flight_Snapshot_Monthly
 
 
 
+GO
+-- ==========================================================
+-- ================= Data Mart 2 ~ Customer =================
+-- ==========================================================
+GO
 
 
-
-
-
-
-
-
-
-
-
-
-
--- -- Fact: Flight Lifecycle (Accumulating)
--- CREATE TABLE Fact_Flight_Lifecycle
--- (
---     Flight_SK INT PRIMARY KEY,
---     Scheduled_Departure_Date DATE,
---     Actual_Departure_Date DATE,
---     Actual_Arrival_Date DATE,
---     Cancellation_Date DATE,
---     Final_Status VARCHAR(30),
---     Total_Duration_Minutes INT,
---     Aircraft_SK INT REFERENCES Dim_Aircraft(Aircraft_SK),
---     Route_SK INT REFERENCES Dim_Route(Route_SK),
---     Schedule_SK INT REFERENCES Dim_Schedule(Schedule_SK),
---     CONSTRAINT FK_Fact_Flight_Lifecycle_Flight_SK FOREIGN KEY (Flight_SK) REFERENCES Dim_Flight(Flight_SK)
--- );
-
--- -- Fact less: Route Execution
--- CREATE TABLE Fact_Route_Execution
--- (
---     Route_SK INT REFERENCES Dim_Route(Route_SK),
---     Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
---     Aircraft_SK INT REFERENCES Dim_Aircraft(Aircraft_SK),
---     PRIMARY KEY (Route_SK, Date_Key, Aircraft_SK)
--- );
 
 -- -- Fact: Ticket Sales (Transactional)
 -- CREATE TABLE Fact_Ticket_Sales
