@@ -536,7 +536,7 @@ DROP TABLE IF EXISTS Fact_Periodic_Route_Flight_Snapshot_Monthly;
 GO
 CREATE TABLE Fact_Periodic_Route_Flight_Snapshot_Monthly
 (
-    Snapshot_DateTime DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    DateTime_Key DATETIME REFERENCES Dim_DateTime(DateTime_ID),
     Route_ID INT REFERENCES Dim_Route(Route_SK),
     Departure_Airport_ID INT REFERENCES Dim_Airport(Airport_SK),
     Arrival_Airport_ID INT REFERENCES Dim_Airport(Airport_SK),
@@ -568,7 +568,7 @@ GO
 CREATE TABLE Fact_Transaction_Booking_Ticket
 (
     Flight_ID INT REFERENCES Dim_Flight(Flight_ID),
-    Class_ID INT REFERENCES Dim_Ticket_Class(Class_SK),
+    Ticket_Class_ID INT REFERENCES Dim_Ticket_Class(Class_SK),
     Ticket_Status_ID INT REFERENCES Dim_Ticket_Status(Status_ID),
     Customer_ID INT REFERENCES Dim_Customer(Customer_SK),
     Payment_Method_ID INT REFERENCES Dim_Payment_Method(Payment_Method_ID),
@@ -590,43 +590,45 @@ CREATE TABLE Fact_Transaction_Booking_Ticket
 
 
 
--- -- Fact: Ticket Sales Snapshot (Periodic)
--- CREATE TABLE Fact_Ticket_Sales_Snapshot
--- (
---     Snapshot_ID INT PRIMARY KEY,
---     Snapshot_Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
---     Class_SK INT REFERENCES Dim_Class(Class_SK),
---     Total_Tickets_Sold INT,
---     Total_Revenue DECIMAL(12,2),
---     Avg_Discount DECIMAL(10,2)
--- );
-
--- -- Fact: Customer Lifecycle (Accumulating)
--- CREATE TABLE Fact_Customer_Lifecycle
--- (
---     Customer_SK INT PRIMARY KEY,
---     Sign_up_Date DATE,
---     First_Booking_Date DATE,
---     Last_Booking_Date DATE,
---     Loyalty_Change_Date DATE,
---     Lifetime_Value DECIMAL(12,2),
---     Total_Tickets INT,
---     Avg_Spend_Per_Ticket DECIMAL(10,2),
---     CONSTRAINT FK_Fact_Customer_Lifecycle_Customer_SK FOREIGN KEY (Customer_SK) REFERENCES Dim_Customer(Customer_SK)
--- );
-
--- -- Fact less: Customer Feedback
--- CREATE TABLE Fact_Customer_Feedback
--- (
---     Customer_SK INT REFERENCES Dim_Customer(Customer_SK),
---     Flight_SK INT REFERENCES Dim_Flight(Flight_SK),
---     Feedback_Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
---     Rating INT,
---     Comment_Text NVARCHAR(2000),
---     PRIMARY KEY (Customer_SK, Flight_SK, Feedback_Date_Key)
--- );
+-- Fact: Ticket Class Sales Daily Snapshot (Periodic)
+DROP TABLE IF EXISTS Fact_Ticket_Class_Sales_Daily;
+GO
+CREATE TABLE Fact_Ticket_Class_Sales_Daily
+(
+    DateTime_Key DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Ticket_Class_ID INT REFERENCES Dim_Ticket_Class(Class_SK),
+    Route_ID INT REFERENCES Dim_Route(Route_SK),
+    Total_Tickets_Sold INT,
+    Total_Price DECIMAL(10,2),
+    Avg_Price DECIMAL(10,2),
+    Avg_Discount DECIMAL(10,2),
+    Avg_Final_Price DECIMAL(10,2),
+    Avg_Cancellation_Fee DECIMAL(10,2),
+    Total_Cancellation_Fee DECIMAL(10,2),
+    -- feedback information
+    Avg_Feedback_Rating DECIMAL(6,2),
+    Avg_Analyzed_Text_Feedback DECIMAL(6,2),
+);
 
 
+
+-- Fact: Customer Lifecycle (Accumulating)
+CREATE TABLE Fact_Accumulate_Customer_Lifecycle
+(
+    Customer_ID INT REFERENCES Dim_Customer(Customer_SK),
+    Sign_up_Date DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    First_Booking_Date DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Last_Booking_Date DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Loyalty_Change_Date DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Total_Tickets_Booking INT,
+    Total_Successfully_Flight INT,
+    Total_Cancellation INT,
+    Loyalty_Points INT,
+    Total_Ticket_Price DECIMAL(10,2),
+    Avg_Feedback_Rating DECIMAL(6,2),
+    Total_Cancellation_Fee DECIMAL(10,2),
+    Avg_Analyzed_Text_Feedback DECIMAL(6,2),
+);
 
 
 
