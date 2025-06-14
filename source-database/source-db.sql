@@ -266,8 +266,11 @@ CREATE TABLE Maintenance_Type
 (
     Maintenance_Type_ID INT PRIMARY KEY,
     Type_Name VARCHAR(100),
-    Description NVARCHAR(1000),
+    Issue_Description NVARCHAR(2000),
+    Resolution_Notes NVARCHAR(2000),
+    Parts_Replace NVARCHAR(1000),
     Tools_Required NVARCHAR(1000),
+    Estimated_Cost DECIMAL(15,2),
     Estimated_Duration_Hours INT,
     FAA_Required BIT
 );
@@ -380,18 +383,18 @@ CREATE TABLE Maintenance
 (
     Maintenance_ID INT PRIMARY KEY,
     Aircraft_ID INT NOT NULL,
+    Airport_Code VARCHAR(10),
     Maintenance_Type_ID INT NOT NULL,
-    Technician_ID INT NOT NULL,
+    Supervise_Technician_ID INT NOT NULL,
     Maintenance_Start_Date DATETIME NOT NULL,
     Maintenance_End_Date DATETIME NULL,
-    Duration_Hours DECIMAL(6,2),
-    Cost DECIMAL(10,2),
-    Issue_Description NVARCHAR(2000),
-    Resolution_Notes NVARCHAR(2000),
-    Parts_Replaced NVARCHAR(1000),
+    Part_Cost DECIMAL(10,2),
+    Technician_Fee DECIMAL(10,2),
+    Technician_Count INT,
     FOREIGN KEY (Aircraft_ID) REFERENCES Aircraft(Aircraft_ID),
+    FOREIGN KEY (Airport_Code) REFERENCES Airport(Airport_Code),
     FOREIGN KEY (Maintenance_Type_ID) REFERENCES Maintenance_Type(Maintenance_Type_ID),
-    FOREIGN KEY (Technician_ID) REFERENCES Technician(Technician_ID)
+    FOREIGN KEY (Supervise_Technician_ID) REFERENCES Technician(Technician_ID)
 );
 
 

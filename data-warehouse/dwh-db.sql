@@ -408,8 +408,11 @@ CREATE TABLE Dim_Maintenance_Type
 (
     Maintenance_Type_ID INT PRIMARY KEY,
     Type_Name VARCHAR(100),
-    Description NVARCHAR(1000),
+    Issue_Description NVARCHAR(2000),
+    Resolution_Notes NVARCHAR(2000),
+    Parts_Replace NVARCHAR(1000),
     Tools_Required NVARCHAR(1000),
+    Estimated_Cost DECIMAL(15,2),
     Estimated_Duration_Hours INT,
     FAA_Required BIT
 );
@@ -677,25 +680,25 @@ GO
 
 
 
+-- Fact: Maintenance Log (Transactional)
+DROP TABLE IF EXISTS Fact_Transaction_Maintenance_Log;
+GO
+CREATE TABLE Fact_Transaction_Maintenance_Log
+(
+    Aircraft_ID INT REFERENCES Dim_Aircraft(Aircraft_SK),
+    Airport_ID INT REFERENCES Dim_Airport(Airport_SK),
+    Maintenance_Type_ID INT REFERENCES Dim_Maintenance_Type(Maintenance_Type_ID),
+    Supervise_Technician_ID INT REFERENCES Dim_Technician(Technician_ID),
+    Start_Date_Key DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    End_Date_Key DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Duration_Hours DECIMAL(6,2),
+    Part_Cost DECIMAL(10,2),
+    Total_Cost DECIMAL(10,2),
+    Technician_Fee DECIMAL(10,2),
+    Technician_Count INT,
+);
 
 
-
-
--- -- Fact: Maintenance Log (Transactional)
--- CREATE TABLE Fact_Maintenance_Log
--- (
---     Maintenance_ID INT PRIMARY KEY,
---     Aircraft_SK INT REFERENCES Dim_Aircraft(Aircraft_SK),
---     Maintenance_Type_SK INT REFERENCES Dim_Maintenance_Type(Maintenance_Type_SK),
---     Technician_ID INT REFERENCES Dim_Technician(Technician_ID),
---     Start_Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
---     End_Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
---     Start_Date DATE,
---     End_Date DATE,
---     Duration_Hours INT,
---     Cost DECIMAL(10,2),
---     Issue_Description NVARCHAR(2000)
--- );
 
 -- -- Fact: Maintenance Snapshot (Periodic)
 -- CREATE TABLE Fact_Maintenance_Snapshot_Monthly
@@ -708,6 +711,8 @@ GO
 --     Avg_Downtime DECIMAL(10,2),
 --     Most_Common_Issue NVARCHAR(200)
 -- );
+
+
 
 -- -- Fact: Aircraft Lifecycle (Accumulating)
 -- CREATE TABLE Fact_Aircraft_Lifecycle
@@ -722,6 +727,8 @@ GO
 --     Total_Maintenance_Cost DECIMAL(12,2),
 --     CONSTRAINT FK_Fact_Aircraft_Lifecycle_Aircraft_SK FOREIGN KEY (Aircraft_SK) REFERENCES Dim_Aircraft(Aircraft_SK)
 -- );
+
+
 
 -- -- Fact less: Health Checks
 -- CREATE TABLE Fact_Health_Checks
