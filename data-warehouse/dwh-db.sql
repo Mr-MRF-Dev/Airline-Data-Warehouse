@@ -620,6 +620,9 @@ CREATE TABLE Fact_Transaction_Customer_Cargo
     Weight_KG DECIMAL(10,2),
     Volume_CM3 DECIMAL(10,2),
     Declared_Value DECIMAL(10,2),
+    -- additional fields (not major & part of the fact table, just for saving the data)
+    Ticket_ID INT,
+    Cargo_ID INT,
 );
 
 
