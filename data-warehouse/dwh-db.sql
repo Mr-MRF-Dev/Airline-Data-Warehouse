@@ -693,24 +693,31 @@ CREATE TABLE Fact_Transaction_Maintenance_Log
     End_Date_Key DATETIME REFERENCES Dim_DateTime(DateTime_ID),
     Duration_Hours DECIMAL(6,2),
     Part_Cost DECIMAL(10,2),
-    Total_Cost DECIMAL(10,2),
+    Final_Cost DECIMAL(10,2),
     Technician_Fee DECIMAL(10,2),
     Technician_Count INT,
 );
 
 
 
--- -- Fact: Maintenance Snapshot (Periodic)
--- CREATE TABLE Fact_Maintenance_Snapshot_Monthly
--- (
---     Snapshot_ID INT PRIMARY KEY,
---     Snapshot_Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
---     Aircraft_SK INT REFERENCES Dim_Aircraft(Aircraft_SK),
---     Total_Maintenances INT,
---     Total_Cost DECIMAL(12,2),
---     Avg_Downtime DECIMAL(10,2),
---     Most_Common_Issue NVARCHAR(200)
--- );
+-- Fact: Aircraft Health Check Snapshot Monthly (Periodic)
+DROP TABLE IF EXISTS Fact_Aircraft_Health_Check_Snapshot_Monthly;
+GO
+CREATE TABLE Fact_Aircraft_Health_Check_Snapshot_Monthly
+(
+    DateTime_Key DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Aircraft_ID INT REFERENCES Dim_Aircraft(Aircraft_SK),
+    Total_Flight_Hours DECIMAL(12,2),
+    Total_Revenue DECIMAL(12,2),
+    Total_Flight_Cost DECIMAL(12,2),
+    Total_Maintenances INT,
+    Total_Part_Cost DECIMAL(12,2),
+    Total_Technician_Fee DECIMAL(12,2),
+    Total_Final_Cost DECIMAL(12,2),
+    Max_DownTime_Hours DECIMAL(10,2),
+    Avg_DownTime_Hours DECIMAL(10,2),
+    Min_DownTime_Hours DECIMAL(10,2),
+);
 
 
 
@@ -726,18 +733,4 @@ CREATE TABLE Fact_Transaction_Maintenance_Log
 --     Total_Downtime INT,
 --     Total_Maintenance_Cost DECIMAL(12,2),
 --     CONSTRAINT FK_Fact_Aircraft_Lifecycle_Aircraft_SK FOREIGN KEY (Aircraft_SK) REFERENCES Dim_Aircraft(Aircraft_SK)
--- );
-
-
-
--- -- Fact less: Health Checks
--- CREATE TABLE Fact_Health_Checks
--- (
---     Aircraft_SK INT REFERENCES Dim_Aircraft(Aircraft_SK),
---     Date_Key INT REFERENCES Dim_DateTimeTime(Date_Key),
---     Technician_ID INT REFERENCES Dim_Technician(Technician_ID),
---     Health_Score INT,
---     Passed_Flag BIT,
---     Notes NVARCHAR(1000),
---     PRIMARY KEY (Aircraft_SK, Date_Key, Technician_ID)
 -- );
