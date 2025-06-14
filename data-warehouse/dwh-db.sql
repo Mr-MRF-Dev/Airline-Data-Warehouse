@@ -296,6 +296,20 @@ CREATE TABLE Dim_Cargo_Type
 
 
 
+-- the Cargo Type Dim
+-- all fields using SCD 1 or SCD 0
+DROP TABLE IF EXISTS Dim_Cargo_Status;
+GO
+CREATE TABLE Dim_Cargo_Status
+(
+    Cargo_Status_ID INT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Description NVARCHAR(1000),
+    -- Is_Lost, Is_Damaged, Is_Insure,
+);
+
+
+
 -- the Crew Role Dim - Hierarchical Crew Role
 -- all fields using SCD 1
 DROP TABLE IF EXISTS Dim_Crew_Role;
@@ -571,6 +585,7 @@ CREATE TABLE Fact_Transaction_Booking_Ticket
     Ticket_Class_ID INT REFERENCES Dim_Ticket_Class(Class_SK),
     Ticket_Status_ID INT REFERENCES Dim_Ticket_Status(Status_ID),
     Customer_ID INT REFERENCES Dim_Customer(Customer_SK),
+    Customer_Loyalty_Tier_ID INT REFERENCES Dim_Customer_Loyalty_Tier(Loyalty_Tier_SK),
     Payment_Method_ID INT REFERENCES Dim_Payment_Method(Payment_Method_ID),
     Cancellation_Reason_ID INT REFERENCES Dim_Booking_Cancellation_Reason(Cancellation_ID),
     Booking_Created_At DATETIME REFERENCES Dim_DateTime(DateTime_ID),
@@ -586,6 +601,25 @@ CREATE TABLE Fact_Transaction_Booking_Ticket
     Ticket_ID INT,
     Booking_ID INT,
     Seat_Number VARCHAR(10),
+);
+
+
+
+-- Fact: Customer Cargo (Transactional)
+DROP TABLE IF EXISTS Fact_Transaction_Customer_Cargo;
+GO
+CREATE TABLE Fact_Transaction_Customer_Cargo
+(
+    Flight_ID INT REFERENCES Dim_Flight(Flight_ID),
+    Ticket_Class_ID INT REFERENCES Dim_Ticket_Class(Class_SK),
+    Customer_ID INT REFERENCES Dim_Customer(Customer_SK),
+    Customer_Loyalty_Tier_ID INT REFERENCES Dim_Customer_Loyalty_Tier(Loyalty_Tier_SK),
+    Cargo_Type_ID INT REFERENCES Dim_Cargo_Type(Cargo_Type_ID),
+    Cargo_Status_ID INT REFERENCES Dim_Cargo_Status(Cargo_Status_ID),
+    Cargo_Delivery_Date DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Weight_KG DECIMAL(10,2),
+    Volume_CM3 DECIMAL(10,2),
+    Declared_Value DECIMAL(10,2),
 );
 
 
