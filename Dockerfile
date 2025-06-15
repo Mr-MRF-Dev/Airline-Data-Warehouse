@@ -14,9 +14,11 @@ VOLUME /var/opt/mssql
 
 COPY ./source-database/*.sql /scripts/
 COPY ./data-warehouse/*.sql /scripts/
+COPY ./storage-area/*.sql /scripts/
 
 RUN /bin/bash -c "/opt/mssql/bin/sqlservr & sleep 30 & /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P Admin@Pass -C -i /scripts/source-db.sql \
     && /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P Admin@Pass -C -i /scripts/dwh-db.sql \
+    && /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P Admin@Pass -C -i /scripts/sa-db-ddl.sql \
     "
 
 CMD [ "/opt/mssql/bin/sqlservr" ]
