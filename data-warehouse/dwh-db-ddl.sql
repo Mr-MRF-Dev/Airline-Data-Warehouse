@@ -297,7 +297,7 @@ CREATE TABLE Dim_Cargo_Type
 
 
 -- the Cargo Type Dim
--- all fields using SCD 1 or SCD 0
+-- all fields using SCD 1
 DROP TABLE IF EXISTS Dim_Cargo_Status;
 GO
 CREATE TABLE Dim_Cargo_Status
@@ -305,7 +305,6 @@ CREATE TABLE Dim_Cargo_Status
     Cargo_Status_ID INT PRIMARY KEY,
     Name VARCHAR(100) NOT NULL,
     Description NVARCHAR(1000),
-    -- Is_Lost, Is_Damaged, Is_Insure,
 );
 
 

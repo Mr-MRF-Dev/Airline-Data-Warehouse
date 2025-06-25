@@ -417,23 +417,33 @@ CREATE TABLE Feedback
 
 
 
+DROP TABLE IF EXISTS Cargo_Status;
+GO
+CREATE TABLE Cargo_Status
+(
+    Cargo_Status_ID INT PRIMARY KEY,
+    Status_Name VARCHAR(50),
+    Description NVARCHAR(200),
+);
+
+
+
 DROP TABLE IF EXISTS Cargo;
 GO
 CREATE TABLE Cargo
 (
     Cargo_ID INT PRIMARY KEY,
+    Cargo_Status_ID INT,
     Ticket_ID INT,
     Flight_ID INT,
     Cargo_Type_ID INT,
     Weight_KG DECIMAL(10,2),
     Volume_CM3 DECIMAL(10,2),
     Declared_Value DECIMAL(10,2),
-    Is_Lost BIT,
-    Is_Damaged BIT,
-    Is_Insure BIT,
     Cargo_Delivery_Date DATE,
     FOREIGN KEY (Ticket_ID) REFERENCES Ticket(Ticket_ID),
     FOREIGN KEY (Flight_ID) REFERENCES Flight(Flight_ID),
+    FOREIGN KEY (Cargo_Status_ID) REFERENCES Cargo_Status(Cargo_Status_ID),
     FOREIGN KEY (Cargo_Type_ID) REFERENCES Cargo_Type(Cargo_Type_ID)
 );
 
