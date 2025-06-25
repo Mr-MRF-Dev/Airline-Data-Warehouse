@@ -1,7 +1,7 @@
 -- this file is data ware house, have facts and dimensions
 GO
 USE [master];
-IF DB_ID('AirlineDWH') IS
+IF DB_ID('AirlineDWH') IS NOT NULL
 BEGIN
     ALTER DATABASE AirlineDWH SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
     DROP DATABASE AirlineDWH;
