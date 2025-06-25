@@ -1,7 +1,7 @@
 -- this file is data ware house, have facts and dimensions
 GO
 USE [master];
-IF DB_ID('AirlineDWH') IS NOT NULL
+IF DB_ID('AirlineDWH') IS
 BEGIN
     ALTER DATABASE AirlineDWH SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
     DROP DATABASE AirlineDWH;
@@ -75,16 +75,16 @@ CREATE TABLE Dim_Aircraft
     -- aircraft id and registration
     Aircraft_SK INT,
     Aircraft_ID INT,
-    Registration_Number VARCHAR(20),
+    Registration_Number VARCHAR(25),
     -- Aircraft information
-    Model VARCHAR(50),
-    Manufacturer VARCHAR(50),
+    Model VARCHAR(55),
+    Manufacturer VARCHAR(55),
     Manufacture_Date DATE,
-    Engine_Type VARCHAR(50),
+    Engine_Type VARCHAR(55),
     Max_Range_KM INT,
     -- Aircraft specifications
     Passenger_Capacity INT,
-    Fuel_Capacity_Liters DECIMAL(10,2),
+    Fuel_Capacity_Liters DECIMAL(15,2),
     Cargo_Capacity_KG INT,
     -- SCD 2, track the aircraft activity
     Is_Active BIT,
@@ -104,16 +104,16 @@ CREATE TABLE Dim_Airport
 (
     -- airport information
     Airport_SK INT,
-    Airport_Code VARCHAR(10),
-    Airport_Name VARCHAR(100),
-    IATA_Code CHAR(3),
-    ICAO_Code CHAR(4),
+    Airport_Code VARCHAR(15),
+    Airport_Name VARCHAR(110),
+    IATA_Code CHAR(5),
+    ICAO_Code CHAR(6),
     -- location information
-    City VARCHAR(50),
-    Country VARCHAR(50),
-    Latitude DECIMAL(10,6),
-    Longitude DECIMAL(10,6),
-    Timezone VARCHAR(50),
+    City VARCHAR(55),
+    Country VARCHAR(55),
+    Latitude DECIMAL(13,6),
+    Longitude DECIMAL(13,6),
+    Timezone VARCHAR(55),
     -- airport specifications
     Elevation_Feet INT,
     Terminal_Count INT,
@@ -137,13 +137,13 @@ CREATE TABLE Dim_Route
 (
     Route_SK INT,
     Route_ID INT,
-    Route_Code VARCHAR(20),
-    Route_Name VARCHAR(100),
+    Route_Code VARCHAR(25),
+    Route_Name VARCHAR(110),
     -- route information
     Origin_Airport_ID INT,
     Destination_Airport_ID INT,
-    Origin_Airport_Name VARCHAR(10),
-    Destination_Airport_Name VARCHAR(10),
+    Origin_Airport_Name VARCHAR(15),
+    Destination_Airport_Name VARCHAR(15),
     Distance_KM INT,
     Flight_Duration_Minutes INT,
     Is_International BIT,
@@ -165,8 +165,8 @@ CREATE TABLE Dim_Customer_Loyalty_Tier
 (
     Loyalty_Tier_SK INT,
     Loyalty_Tier_ID INT,
-    Tier_Name VARCHAR(50),
-    Benefits NVARCHAR(1000),
+    Tier_Name VARCHAR(55),
+    Benefits NVARCHAR(1100),
     Required_Points INT,
     -- SCD 2, track the loyalty tier activity
     Is_Active BIT,
@@ -187,25 +187,25 @@ CREATE TABLE Dim_Customer
     Customer_SK INT,
     Customer_ID INT,
     -- Passport Code is SCD 2
-    Passport_Code VARCHAR(20),
-    First_Name VARCHAR(50),
-    Last_Name VARCHAR(50),
-    Email VARCHAR(100),
+    Passport_Code VARCHAR(25),
+    First_Name VARCHAR(55),
+    Last_Name VARCHAR(55),
+    Email VARCHAR(110),
     -- Phone Number is SCD 2
-    Phone_Number VARCHAR(20),
+    Phone_Number VARCHAR(25),
     Gender CHAR(1),
     Birth_Date DATE,
     -- address information
-    Nationality VARCHAR(50),
-    City VARCHAR(50),
-    Country VARCHAR(50),
-    Address VARCHAR(200),
-    Postal_Code VARCHAR(20),
-    Preferred_Language VARCHAR(30),
+    Nationality VARCHAR(55),
+    City VARCHAR(55),
+    Country VARCHAR(55),
+    Address VARCHAR(220),
+    Postal_Code VARCHAR(25),
+    Preferred_Language VARCHAR(35),
     -- loyalty program information
     -- Loyalty Tier is SCD 2
     Loyalty_Tier_ID INT,
-    Loyalty_Tier_NAME VARCHAR(50),
+    Loyalty_Tier_NAME VARCHAR(55),
     Loyalty_Change_Date DATE,
     -- End of SCD 2
     Loyalty_Points INT,
@@ -238,16 +238,16 @@ CREATE TABLE Dim_Ticket_Class
 (
     Class_SK INT,
     Class_ID INT,
-    Class_Code VARCHAR(10) NOT NULL,
-    Class_Name VARCHAR(50) NOT NULL,
-    Description NVARCHAR(500),
+    Class_Code VARCHAR(15),
+    Class_Name VARCHAR(55),
+    Description NVARCHAR(550),
     -- Pricing information
-    Base_Price_Multiplier DECIMAL(4,2) NOT NULL,
-    Change_Fee_Amount DECIMAL(10,2),
-    Cancellation_Fee_Amount DECIMAL(10,2),
+    Base_Price_Multiplier DECIMAL(6,2),
+    Change_Fee_Amount DECIMAL(12,2),
+    Cancellation_Fee_Amount DECIMAL(12,2),
     -- Passenger benefits
-    Baggage_Allowance_KG DECIMAL(5,2) NOT NULL,
-    Carry_On_Allowance_KG DECIMAL(5,2) NOT NULL,
+    Baggage_Allowance_KG DECIMAL(7,2),
+    Carry_On_Allowance_KG DECIMAL(7,2),
     -- Status information
     -- SCD 2, track the ticket class activity
     Is_Active BIT,
@@ -267,12 +267,12 @@ CREATE TABLE Dim_Payment_Method
 (
     -- payment method information
     Payment_Method_ID INT,
-    Method_Name VARCHAR(50),
-    Description NVARCHAR(200),
+    Method_Name VARCHAR(55),
+    Description NVARCHAR(220),
     -- provider information
-    Provider_Name VARCHAR(50),
-    Processing_Fee DECIMAL(5,2),
-    Currency VARCHAR(3),
+    Provider_Name VARCHAR(55),
+    Processing_Fee DECIMAL(7,2),
+    Currency VARCHAR(5),
     -- SCD 2, track the  payment method activity
     Is_Active BIT,
     Effective_Start_Date DATE,
@@ -290,10 +290,10 @@ GO
 CREATE TABLE Dim_Cargo_Type
 (
     Cargo_Type_ID INT,
-    Type_Name VARCHAR(100) NOT NULL,
-    Description NVARCHAR(1000),
-    Is_Hazardous BIT NOT NULL,
-    Max_Weight_KG DECIMAL(10,2),
+    Type_Name VARCHAR(110),
+    Description NVARCHAR(1100),
+    Is_Hazardous BIT,
+    Max_Weight_KG DECIMAL(12,2),
 );
 
 
@@ -305,8 +305,8 @@ GO
 CREATE TABLE Dim_Cargo_Status
 (
     Cargo_Status_ID INT,
-    Name VARCHAR(100) NOT NULL,
-    Description NVARCHAR(1000),
+    Name VARCHAR(110),
+    Description NVARCHAR(1100),
 );
 
 
@@ -318,12 +318,12 @@ GO
 CREATE TABLE Dim_Crew_Role
 (
     Crew_Role_ID INT,
-    Role_Name VARCHAR(50) NOT NULL,
-    Role_Description NVARCHAR(500),
-    Basic_Fee_Per_Hour DECIMAL(10,2) NOT NULL,
+    Role_Name VARCHAR(55),
+    Role_Description NVARCHAR(550),
+    Basic_Fee_Per_Hour DECIMAL(12,2),
     Role_Type_ID INT,
-    Role_Type_Name VARCHAR(50) NOT NULL,
-    Role_Type_Description NVARCHAR(500),
+    Role_Type_Name VARCHAR(55),
+    Role_Type_Description NVARCHAR(550),
 );
 
 
@@ -337,27 +337,27 @@ CREATE TABLE Dim_Crew
     Crew_ID INT,
     Employee_ID INT,
     Role_Type_ID INT,
-    Role_Type_Name VARCHAR (50),
+    Role_Type_Name VARCHAR (55),
     -- information
-    First_Name VARCHAR(50),
-    Last_Name VARCHAR(50),
-    Email VARCHAR(100),
+    First_Name VARCHAR(55),
+    Last_Name VARCHAR(55),
+    Email VARCHAR(110),
     -- Phone Number is SCD 3
-    Original_Phone_Number VARCHAR(20),
-    Current_Phone_Number VARCHAR(20),
+    Original_Phone_Number VARCHAR(25),
+    Current_Phone_Number VARCHAR(25),
     Effective_Phone_Number DATE,
     -- end of Phone Number SCD 3
     Birth_Date DATE,
     Hire_Date DATE,
     Exit_Date DATE,
     -- Emergency Contact is SCD 3
-    Original_Emergency_Contact VARCHAR(100),
-    Current_Emergency_Contact VARCHAR(100),
+    Original_Emergency_Contact VARCHAR(110),
+    Current_Emergency_Contact VARCHAR(110),
     Effective_Emergency_Contact DATE,
     -- end of Emergency Contact SCD 3
-    Certification_Level VARCHAR (50),
-    Nationality VARCHAR (50),
-    License_Number VARCHAR (30),
+    Certification_Level VARCHAR (55),
+    Nationality VARCHAR (55),
+    License_Number VARCHAR (35),
     License_Expiry_Date DATE,
     Training_Hours INT,
 );
@@ -372,31 +372,31 @@ CREATE TABLE Dim_Technician
 (
     Technician_ID INT,
     Employee_ID INT,
-    First_Name VARCHAR(50),
-    Last_Name VARCHAR(50),
-    Email VARCHAR(100),
+    First_Name VARCHAR(55),
+    Last_Name VARCHAR(55),
+    Email VARCHAR(110),
     -- Phone Number is SCD 3
-    Original_Phone_Number VARCHAR(20),
-    Current_Phone_Number VARCHAR(20),
+    Original_Phone_Number VARCHAR(25),
+    Current_Phone_Number VARCHAR(25),
     Effective_Phone_Number DATE,
     -- end of Phone Number SCD 3
     Birth_Date DATE,
     Hire_Date DATE,
     Exit_Date DATE,
     -- Emergency Contact is SCD 3
-    Original_Emergency_Contact VARCHAR(100),
-    Current_Emergency_Contact VARCHAR(100),
+    Original_Emergency_Contact VARCHAR(110),
+    Current_Emergency_Contact VARCHAR(110),
     Effective_Emergency_Contact DATE,
     -- end of Emergency Contact SCD 3
-    Specialty VARCHAR(100),
-    Certification_Level VARCHAR(50),
-    License_Number VARCHAR(30),
+    Specialty VARCHAR(110),
+    Certification_Level VARCHAR(55),
+    License_Number VARCHAR(35),
     License_Expiry_Date DATE,
     Training_Hours INT,
     Years_Experience INT,
     Supervisor_ID INT,
-    Supervisor_First_Name VARCHAR(50),
-    Supervisor_Last_Name VARCHAR(50)
+    Supervisor_First_Name VARCHAR(55),
+    Supervisor_Last_Name VARCHAR(55)
 );
 
 
@@ -408,12 +408,12 @@ GO
 CREATE TABLE Dim_Maintenance_Type
 (
     Maintenance_Type_ID INT,
-    Type_Name VARCHAR(100),
-    Issue_Description NVARCHAR(2000),
-    Resolution_Notes NVARCHAR(2000),
-    Parts_Replace NVARCHAR(1000),
-    Tools_Required NVARCHAR(1000),
-    Estimated_Cost DECIMAL(15,2),
+    Type_Name VARCHAR(110),
+    Issue_Description NVARCHAR(2200),
+    Resolution_Notes NVARCHAR(2200),
+    Parts_Replace NVARCHAR(1100),
+    Tools_Required NVARCHAR(1100),
+    Estimated_Cost DECIMAL(20,2),
     Estimated_Duration_Hours INT,
     FAA_Required BIT
 );
@@ -427,8 +427,8 @@ GO
 CREATE TABLE Dim_Flight_Status
 (
     Flight_Status_ID INT,
-    Status_Name VARCHAR(50),
-    Description NVARCHAR(200),
+    Status_Name VARCHAR(55),
+    Description NVARCHAR(220),
 );
 
 
@@ -440,8 +440,8 @@ GO
 CREATE TABLE Dim_Booking_Cancellation_Reason
 (
     Cancellation_ID INT,
-    Reason NVARCHAR(200),
-    Description NVARCHAR(1000)
+    Reason NVARCHAR(220),
+    Description NVARCHAR(1100)
 );
 
 
@@ -453,8 +453,8 @@ GO
 CREATE TABLE Dim_Ticket_Status
 (
     Status_ID INT,
-    Name VARCHAR(50),
-    Description NVARCHAR(1000)
+    Name VARCHAR(55),
+    Description NVARCHAR(1100)
 );
 
 
@@ -467,28 +467,28 @@ CREATE TABLE Dim_Flight
 (
     -- flight information
     Flight_ID INT,
-    Flight_Number VARCHAR(10),
+    Flight_Number VARCHAR(15),
     Scheduled_Departure DATETIME,
     Scheduled_Arrival DATETIME,
     Actual_Departure DATETIME,
     Actual_Arrival DATETIME,
     -- route information
     Aircraft_ID INT,
-    Aircraft_Model VARCHAR(50),
+    Aircraft_Model VARCHAR(55),
     Route_ID INT,
-    Origin_Airport_Name VARCHAR(10),
-    Destination_Airport_Name VARCHAR(10),
+    Origin_Airport_Name VARCHAR(15),
+    Destination_Airport_Name VARCHAR(15),
     -- flight primary crew information
     Flight_Crew_Captain_ID INT,
-    Flight_Crew_Captain_Name VARCHAR(100),
+    Flight_Crew_Captain_Name VARCHAR(110),
     Flight_Crew_Copilot_ID INT,
-    Flight_Crew_Copilot_Name VARCHAR(100),
+    Flight_Crew_Copilot_Name VARCHAR(110),
     Flight_Crew_Senior_Attendant_ID INT,
-    Flight_Crew_Senior_Attendant_Name VARCHAR(100),
+    Flight_Crew_Senior_Attendant_Name VARCHAR(110),
     Flight_Crew_Security_ID INT,
-    Flight_Crew_Security_Name VARCHAR(100),
+    Flight_Crew_Security_Name VARCHAR(110),
     Flight_Status_ID INT,
-    Flight_Status VARCHAR(50),
+    Flight_Status VARCHAR(55),
 );
 
 
@@ -529,10 +529,10 @@ CREATE TABLE Fact_Accumulate_Flight_Operations
     Departure_Delay_Minutes INT,
     Arrival_Delay_Minutes INT,
     Flight_Duration_Minutes INT,
-    Revenue DECIMAL(15,2),
-    Fuel_Cost DECIMAL(15,2),
-    Crew_Cost DECIMAL(15,2),
-    Service_Cost DECIMAL(15,2),
+    Revenue DECIMAL(18,2),
+    Fuel_Cost DECIMAL(18,2),
+    Crew_Cost DECIMAL(18,2),
+    Service_Cost DECIMAL(18,2),
     Crew_Count INT,
     Passenger_Count INT,
 );
@@ -554,11 +554,11 @@ CREATE TABLE Fact_Transaction_Crew_Flight_Assignment
     -- REFERENCES Dim_DateTime(DateTime_ID),
     End_Time BIGINT,
     -- REFERENCES Dim_DateTime(DateTime_ID),
-    Duration_Hours DECIMAL(6,2),
-    Hourly_Fee DECIMAL(8,2),
-    Total_Fee DECIMAL(10,2),
-    Bonus DECIMAL(10,2),
-    Total_Pay DECIMAL(10,2),
+    Duration_Hours DECIMAL(8,2),
+    Hourly_Fee DECIMAL(10,2),
+    Total_Fee DECIMAL(12,2),
+    Bonus DECIMAL(12,2),
+    Total_Pay DECIMAL(12,2),
     Rating INT,
 );
 
@@ -581,10 +581,10 @@ CREATE TABLE Fact_Periodic_Route_Flight_Snapshot_Monthly
     Total_Departure_Delay_Minutes INT,
     Total_Arrival_Delay_Minutes INT,
     Total_Flight_Duration_Minutes INT,
-    Total_Revenue DECIMAL(15,2),
-    Total_Fuel_Cost DECIMAL(15,2),
-    Total_Crew_Cost DECIMAL(15,2),
-    Total_Service_Cost DECIMAL(15,2),
+    Total_Revenue DECIMAL(18,2),
+    Total_Fuel_Cost DECIMAL(18,2),
+    Total_Crew_Cost DECIMAL(18,2),
+    Total_Service_Cost DECIMAL(18,2),
     Total_Crew_Count INT,
     Total_Passenger_Count INT
 );
@@ -622,17 +622,17 @@ CREATE TABLE Fact_Transaction_Booking_Ticket
     -- REFERENCES Dim_DateTime(DateTime_ID),
     Booking_Update_At BIGINT,
     -- REFERENCES Dim_DateTime(DateTime_ID),
-    Price DECIMAL(10,2),
-    Discount DECIMAL(10,2),
-    Final_Price DECIMAL(10,2),
-    Cancellation_Fee DECIMAL(10,2),
+    Price DECIMAL(12,2),
+    Discount DECIMAL(12,2),
+    Final_Price DECIMAL(12,2),
+    Cancellation_Fee DECIMAL(12,2),
     -- feedback information
     Feedback_Rating INT ,
     Analyzed_Text_Feedback INT,
     -- additional fields (not major & part of the fact table, just for saving the data)
     Ticket_ID INT,
     Booking_ID INT,
-    Seat_Number VARCHAR(10),
+    Seat_Number VARCHAR(12),
 );
 
 
@@ -656,9 +656,9 @@ CREATE TABLE Fact_Transaction_Customer_Cargo
     -- REFERENCES Dim_Cargo_Status(Cargo_Status_ID),
     Cargo_Delivery_Date BIGINT,
     -- REFERENCES Dim_DateTime(DateTime_ID),
-    Weight_KG DECIMAL(10,2),
-    Volume_CM3 DECIMAL(10,2),
-    Declared_Value DECIMAL(10,2),
+    Weight_KG DECIMAL(12,2),
+    Volume_CM3 DECIMAL(12,2),
+    Declared_Value DECIMAL(12,2),
     -- additional fields (not major & part of the fact table, just for saving the data)
     Ticket_ID INT,
     Cargo_ID INT,
@@ -678,15 +678,15 @@ CREATE TABLE Fact_Ticket_Class_Sales_Daily
     Route_ID INT,
     -- REFERENCES Dim_Route(Route_SK),
     Total_Tickets_Sold INT,
-    Total_Price DECIMAL(10,2),
-    Avg_Price DECIMAL(10,2),
-    Avg_Discount DECIMAL(10,2),
-    Avg_Final_Price DECIMAL(10,2),
-    Avg_Cancellation_Fee DECIMAL(10,2),
-    Total_Cancellation_Fee DECIMAL(10,2),
+    Total_Price DECIMAL(12,2),
+    Avg_Price DECIMAL(12,2),
+    Avg_Discount DECIMAL(12,2),
+    Avg_Final_Price DECIMAL(12,2),
+    Avg_Cancellation_Fee DECIMAL(12,2),
+    Total_Cancellation_Fee DECIMAL(12,2),
     -- feedback information
-    Avg_Feedback_Rating DECIMAL(6,2),
-    Avg_Analyzed_Text_Feedback DECIMAL(6,2),
+    Avg_Feedback_Rating DECIMAL(8,2),
+    Avg_Analyzed_Text_Feedback DECIMAL(8,2),
 );
 
 
@@ -710,10 +710,10 @@ CREATE TABLE Fact_Accumulate_Customer_Lifecycle
     Total_Successfully_Flight INT,
     Total_Cancellation INT,
     Loyalty_Points INT,
-    Total_Ticket_Price DECIMAL(10,2),
-    Avg_Feedback_Rating DECIMAL(6,2),
-    Total_Cancellation_Fee DECIMAL(10,2),
-    Avg_Analyzed_Text_Feedback DECIMAL(6,2),
+    Total_Ticket_Price DECIMAL(12,2),
+    Avg_Feedback_Rating DECIMAL(8,2),
+    Total_Cancellation_Fee DECIMAL(12,2),
+    Avg_Analyzed_Text_Feedback DECIMAL(8,2),
 );
 
 
@@ -743,10 +743,10 @@ CREATE TABLE Fact_Transaction_Maintenance_Log
     -- REFERENCES Dim_DateTime(DateTime_ID),
     End_Date_Key BIGINT,
     -- REFERENCES Dim_DateTime(DateTime_ID),
-    Duration_Hours DECIMAL(6,2),
-    Part_Cost DECIMAL(10,2),
-    Final_Cost DECIMAL(10,2),
-    Technician_Fee DECIMAL(10,2),
+    Duration_Hours DECIMAL(8,2),
+    Part_Cost DECIMAL(12,2),
+    Final_Cost DECIMAL(12,2),
+    Technician_Fee DECIMAL(12,2),
     Technician_Count INT,
 );
 
@@ -761,16 +761,16 @@ CREATE TABLE Fact_Aircraft_Health_Check_Snapshot_Monthly
     -- REFERENCES Dim_DateTime(DateTime_ID),
     Aircraft_ID INT,
     -- REFERENCES Dim_Aircraft(Aircraft_SK),
-    Total_Flight_Hours DECIMAL(12,2),
-    Total_Revenue DECIMAL(12,2),
-    Total_Flight_Cost DECIMAL(12,2),
+    Total_Flight_Hours DECIMAL(14,2),
+    Total_Revenue DECIMAL(14,2),
+    Total_Flight_Cost DECIMAL(14,2),
     Total_Maintenances INT,
-    Total_Maintenances_Part_Cost DECIMAL(12,2),
-    Total_Technician_Fee DECIMAL(12,2),
-    Total_Maintenances_Final_Cost DECIMAL(12,2),
-    Max_DownTime_Hours DECIMAL(10,2),
-    Avg_DownTime_Hours DECIMAL(10,2),
-    Min_DownTime_Hours DECIMAL(10,2),
+    Total_Maintenances_Part_Cost DECIMAL(14,2),
+    Total_Technician_Fee DECIMAL(14,2),
+    Total_Maintenances_Final_Cost DECIMAL(14,2),
+    Max_DownTime_Hours DECIMAL(12,2),
+    Avg_DownTime_Hours DECIMAL(12,2),
+    Min_DownTime_Hours DECIMAL(12,2),
 );
 
 
