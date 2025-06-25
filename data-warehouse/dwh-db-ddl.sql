@@ -504,16 +504,16 @@ DROP TABLE IF EXISTS Fact_Accumulate_Flight_Operations;
 GO
 CREATE TABLE Fact_Accumulate_Flight_Operations
 (
-    Flight_ID INT REFERENCES Dim_Flight(Flight_ID),
-    Aircraft_ID INT REFERENCES Dim_Aircraft(Aircraft_SK),
-    Route_ID INT REFERENCES Dim_Route(Route_SK),
-    Departure_Airport_ID INT REFERENCES Dim_Airport(Airport_SK),
-    Arrival_Airport_ID INT REFERENCES Dim_Airport(Airport_SK),
-    Flight_Status_ID INT REFERENCES Dim_Flight_Status(Flight_Status_ID),
-    Scheduled_Departure DATETIME REFERENCES Dim_DateTime(DateTime_ID),
-    Scheduled_Arrival DATETIME REFERENCES Dim_DateTime(DateTime_ID),
-    Actual_Departure DATETIME REFERENCES Dim_DateTime(DateTime_ID),
-    Actual_Arrival DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Flight_ID INT, -- REFERENCES Dim_Flight(Flight_ID),
+    Aircraft_ID INT, -- REFERENCES Dim_Aircraft(Aircraft_SK),
+    Route_ID INT, -- REFERENCES Dim_Route(Route_SK),
+    Departure_Airport_ID INT, -- REFERENCES Dim_Airport(Airport_SK),
+    Arrival_Airport_ID INT, -- REFERENCES Dim_Airport(Airport_SK),
+    Flight_Status_ID INT, -- REFERENCES Dim_Flight_Status(Flight_Status_ID),
+    Scheduled_Departure DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Scheduled_Arrival DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Actual_Departure DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Actual_Arrival DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
     Departure_Delay_Minutes INT,
     Arrival_Delay_Minutes INT,
     Flight_Duration_Minutes INT,
@@ -532,11 +532,11 @@ DROP TABLE IF EXISTS Fact_Transaction_Crew_Flight_Assignment;
 GO
 CREATE TABLE Fact_Transaction_Crew_Flight_Assignment
 (
-    Flight_ID INT REFERENCES Dim_Flight(Flight_ID),
-    Crew_ID INT REFERENCES Dim_Crew(Crew_ID),
-    Crew_Role_ID INT REFERENCES Dim_Crew_Role(Crew_Role_ID),
-    Start_Time DATETIME REFERENCES Dim_DateTime(DateTime_ID),
-    End_Time DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Flight_ID INT, -- REFERENCES Dim_Flight(Flight_ID),
+    Crew_ID INT, -- REFERENCES Dim_Crew(Crew_ID),
+    Crew_Role_ID INT, -- REFERENCES Dim_Crew_Role(Crew_Role_ID),
+    Start_Time DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
+    End_Time DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
     Duration_Hours DECIMAL(6,2),
     Hourly_Fee DECIMAL(8,2),
     Total_Fee DECIMAL(10,2),
@@ -552,10 +552,10 @@ DROP TABLE IF EXISTS Fact_Periodic_Route_Flight_Snapshot_Monthly;
 GO
 CREATE TABLE Fact_Periodic_Route_Flight_Snapshot_Monthly
 (
-    DateTime_Key DATETIME REFERENCES Dim_DateTime(DateTime_ID),
-    Route_ID INT REFERENCES Dim_Route(Route_SK),
-    Departure_Airport_ID INT REFERENCES Dim_Airport(Airport_SK),
-    Arrival_Airport_ID INT REFERENCES Dim_Airport(Airport_SK),
+    DateTime_Key DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Route_ID INT, -- REFERENCES Dim_Route(Route_SK),
+    Departure_Airport_ID INT, -- REFERENCES Dim_Airport(Airport_SK),
+    Arrival_Airport_ID INT, -- REFERENCES Dim_Airport(Airport_SK),
     Total_Flights_Count INT,
     Total_Departure_Delay_Minutes INT,
     Total_Arrival_Delay_Minutes INT,
@@ -583,15 +583,15 @@ DROP TABLE IF EXISTS Fact_Transaction_Booking_Ticket;
 GO
 CREATE TABLE Fact_Transaction_Booking_Ticket
 (
-    Flight_ID INT REFERENCES Dim_Flight(Flight_ID),
-    Ticket_Class_ID INT REFERENCES Dim_Ticket_Class(Class_SK),
-    Ticket_Status_ID INT REFERENCES Dim_Ticket_Status(Status_ID),
-    Customer_ID INT REFERENCES Dim_Customer(Customer_SK),
-    Customer_Loyalty_Tier_ID INT REFERENCES Dim_Customer_Loyalty_Tier(Loyalty_Tier_SK),
-    Payment_Method_ID INT REFERENCES Dim_Payment_Method(Payment_Method_ID),
-    Cancellation_Reason_ID INT REFERENCES Dim_Booking_Cancellation_Reason(Cancellation_ID),
-    Booking_Created_At DATETIME REFERENCES Dim_DateTime(DateTime_ID),
-    Booking_Update_At DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Flight_ID INT, -- REFERENCES Dim_Flight(Flight_ID),
+    Ticket_Class_ID INT, -- REFERENCES Dim_Ticket_Class(Class_SK),
+    Ticket_Status_ID INT, -- REFERENCES Dim_Ticket_Status(Status_ID),
+    Customer_ID INT, -- REFERENCES Dim_Customer(Customer_SK),
+    Customer_Loyalty_Tier_ID INT, -- REFERENCES Dim_Customer_Loyalty_Tier(Loyalty_Tier_SK),
+    Payment_Method_ID INT, -- REFERENCES Dim_Payment_Method(Payment_Method_ID),
+    Cancellation_Reason_ID INT, -- REFERENCES Dim_Booking_Cancellation_Reason(Cancellation_ID),
+    Booking_Created_At DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Booking_Update_At DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
     Price DECIMAL(10,2),
     Discount DECIMAL(10,2),
     Final_Price DECIMAL(10,2),
@@ -612,13 +612,13 @@ DROP TABLE IF EXISTS Fact_Transaction_Customer_Cargo;
 GO
 CREATE TABLE Fact_Transaction_Customer_Cargo
 (
-    Flight_ID INT REFERENCES Dim_Flight(Flight_ID),
-    Ticket_Class_ID INT REFERENCES Dim_Ticket_Class(Class_SK),
-    Customer_ID INT REFERENCES Dim_Customer(Customer_SK),
-    Customer_Loyalty_Tier_ID INT REFERENCES Dim_Customer_Loyalty_Tier(Loyalty_Tier_SK),
-    Cargo_Type_ID INT REFERENCES Dim_Cargo_Type(Cargo_Type_ID),
-    Cargo_Status_ID INT REFERENCES Dim_Cargo_Status(Cargo_Status_ID),
-    Cargo_Delivery_Date DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Flight_ID INT, -- REFERENCES Dim_Flight(Flight_ID),
+    Ticket_Class_ID INT, -- REFERENCES Dim_Ticket_Class(Class_SK),
+    Customer_ID INT, -- REFERENCES Dim_Customer(Customer_SK),
+    Customer_Loyalty_Tier_ID INT, -- REFERENCES Dim_Customer_Loyalty_Tier(Loyalty_Tier_SK),
+    Cargo_Type_ID INT, -- REFERENCES Dim_Cargo_Type(Cargo_Type_ID),
+    Cargo_Status_ID INT, -- REFERENCES Dim_Cargo_Status(Cargo_Status_ID),
+    Cargo_Delivery_Date DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
     Weight_KG DECIMAL(10,2),
     Volume_CM3 DECIMAL(10,2),
     Declared_Value DECIMAL(10,2),
@@ -634,9 +634,9 @@ DROP TABLE IF EXISTS Fact_Ticket_Class_Sales_Daily;
 GO
 CREATE TABLE Fact_Ticket_Class_Sales_Daily
 (
-    DateTime_Key DATETIME REFERENCES Dim_DateTime(DateTime_ID),
-    Ticket_Class_ID INT REFERENCES Dim_Ticket_Class(Class_SK),
-    Route_ID INT REFERENCES Dim_Route(Route_SK),
+    DateTime_Key DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Ticket_Class_ID INT, -- REFERENCES Dim_Ticket_Class(Class_SK),
+    Route_ID INT, -- REFERENCES Dim_Route(Route_SK),
     Total_Tickets_Sold INT,
     Total_Price DECIMAL(10,2),
     Avg_Price DECIMAL(10,2),
@@ -654,11 +654,11 @@ CREATE TABLE Fact_Ticket_Class_Sales_Daily
 -- Fact: Customer Lifecycle (Accumulating)
 CREATE TABLE Fact_Accumulate_Customer_Lifecycle
 (
-    Customer_ID INT REFERENCES Dim_Customer(Customer_SK),
-    Sign_up_Date DATETIME REFERENCES Dim_DateTime(DateTime_ID),
-    First_Booking_Date DATETIME REFERENCES Dim_DateTime(DateTime_ID),
-    Last_Booking_Date DATETIME REFERENCES Dim_DateTime(DateTime_ID),
-    Loyalty_Change_Date DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Customer_ID INT, -- REFERENCES Dim_Customer(Customer_SK),
+    Sign_up_Date DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
+    First_Booking_Date DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Last_Booking_Date DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Loyalty_Change_Date DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
     Total_Tickets_Booking INT,
     Total_Successfully_Flight INT,
     Total_Cancellation INT,
@@ -684,12 +684,12 @@ DROP TABLE IF EXISTS Fact_Transaction_Maintenance_Log;
 GO
 CREATE TABLE Fact_Transaction_Maintenance_Log
 (
-    Aircraft_ID INT REFERENCES Dim_Aircraft(Aircraft_SK),
-    Airport_ID INT REFERENCES Dim_Airport(Airport_SK),
-    Maintenance_Type_ID INT REFERENCES Dim_Maintenance_Type(Maintenance_Type_ID),
-    Supervise_Technician_ID INT REFERENCES Dim_Technician(Technician_ID),
-    Start_Date_Key DATETIME REFERENCES Dim_DateTime(DateTime_ID),
-    End_Date_Key DATETIME REFERENCES Dim_DateTime(DateTime_ID),
+    Aircraft_ID INT, -- REFERENCES Dim_Aircraft(Aircraft_SK),
+    Airport_ID INT, -- REFERENCES Dim_Airport(Airport_SK),
+    Maintenance_Type_ID INT, -- REFERENCES Dim_Maintenance_Type(Maintenance_Type_ID),
+    Supervise_Technician_ID INT, -- REFERENCES Dim_Technician(Technician_ID),
+    Start_Date_Key DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
+    End_Date_Key DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
     Duration_Hours DECIMAL(6,2),
     Part_Cost DECIMAL(10,2),
     Final_Cost DECIMAL(10,2),
@@ -704,8 +704,8 @@ DROP TABLE IF EXISTS Fact_Aircraft_Health_Check_Snapshot_Monthly;
 GO
 CREATE TABLE Fact_Aircraft_Health_Check_Snapshot_Monthly
 (
-    DateTime_Key DATETIME REFERENCES Dim_DateTime(DateTime_ID),
-    Aircraft_ID INT REFERENCES Dim_Aircraft(Aircraft_SK),
+    DateTime_Key DATETIME, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Aircraft_ID INT, -- REFERENCES Dim_Aircraft(Aircraft_SK),
     Total_Flight_Hours DECIMAL(12,2),
     Total_Revenue DECIMAL(12,2),
     Total_Flight_Cost DECIMAL(12,2),
@@ -723,7 +723,6 @@ CREATE TABLE Fact_Aircraft_Health_Check_Snapshot_Monthly
 -- -- Fact: Aircraft Lifecycle (Accumulating)
 -- CREATE TABLE Fact_Aircraft_Lifecycle
 -- (
---     Aircraft_SK INT PRIMARY KEY,
 --     Manufacture_Date DATE,
 --     First_Service_Date DATE,
 --     Last_Maintenance_Date DATE,
