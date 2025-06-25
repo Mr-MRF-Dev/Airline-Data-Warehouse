@@ -13,12 +13,14 @@ EXPOSE 1433
 VOLUME /var/opt/mssql
 
 COPY ./source-database/*.sql /scripts/
+COPY ./source-database/data/*.sql /scripts/data/
 COPY ./data-warehouse/*.sql /scripts/
 COPY ./storage-area/*.sql /scripts/
 
 RUN /bin/bash -c "/opt/mssql/bin/sqlservr & sleep 30 & /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P Admin@Pass -C -i /scripts/source-db-ddl.sql \
     && /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P Admin@Pass -C -i /scripts/dwh-db-ddl.sql \
     && /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P Admin@Pass -C -i /scripts/sa-db-ddl.sql \
+    && /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P Admin@Pass -C -i /scripts/data/data-source-db-dml-1.sql \
     "
 
 CMD [ "/opt/mssql/bin/sqlservr" ]
