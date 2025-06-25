@@ -33,6 +33,27 @@ GO
 SET NOCOUNT ON;
 
 -- ===============================================================================
+-- DEPENDENCY VALIDATION
+-- Check if core tables have data before starting generation.
+-- ===============================================================================
+PRINT 'Validating dependencies...';
+
+IF NOT EXISTS (SELECT 1 FROM Route) BEGIN PRINT 'ERROR: Prerequisite table [Route] is empty. Please insert data before running this script.'; RETURN; END
+IF NOT EXISTS (SELECT 1 FROM Aircraft) BEGIN PRINT 'ERROR: Prerequisite table [Aircraft] is empty. Please insert data before running this script.'; RETURN; END
+IF NOT EXISTS (SELECT 1 FROM Customer) BEGIN PRINT 'ERROR: Prerequisite table [Customer] is empty. Please insert data before running this script.'; RETURN; END
+IF NOT EXISTS (SELECT 1 FROM Class) BEGIN PRINT 'ERROR: Prerequisite table [Class] is empty. Please insert data before running this script.'; RETURN; END
+IF NOT EXISTS (SELECT 1 FROM Payment_Method) BEGIN PRINT 'ERROR: Prerequisite table [Payment_Method] is empty. Please insert data before running this script.'; RETURN; END
+IF NOT EXISTS (SELECT 1 FROM Crew) BEGIN PRINT 'ERROR: Prerequisite table [Crew] is empty. Please insert data before running this script.'; RETURN; END
+IF NOT EXISTS (SELECT 1 FROM Crew_Role) BEGIN PRINT 'ERROR: Prerequisite table [Crew_Role] is empty. Please insert data before running this script.'; RETURN; END
+IF NOT EXISTS (SELECT 1 FROM Booking_Cancellation_Reason) BEGIN PRINT 'ERROR: Prerequisite table [Booking_Cancellation_Reason] is empty. Please insert data before running this script.'; RETURN; END
+IF NOT EXISTS (SELECT 1 FROM Cargo_Type) BEGIN PRINT 'ERROR: Prerequisite table [Cargo_Type] is empty. Please insert data before running this script.'; RETURN; END
+IF NOT EXISTS (SELECT 1 FROM Flight_Status) BEGIN PRINT 'ERROR: Prerequisite table [Flight_Status] is empty. Please insert data before running this script.'; RETURN; END
+
+PRINT 'All dependencies are valid.';
+GO
+
+
+-- ===============================================================================
 -- CONFIGURATION
 -- Change this value to control how many new flights are created.
 -- Each flight will have a random number of tickets.
@@ -152,7 +173,7 @@ BEGIN
         SET @FlightDate = DATEADD(day, CAST(RAND() * 365 as INT), '2025-01-01');
         SET @ScheduledDeparture = DATEADD(minute, CAST(RAND() * 1440 as INT), CAST(@FlightDate AS DATETIME));
         SET @ScheduledArrival = DATEADD(minute, @FlightDurationMinutes, @ScheduledDeparture);
-        
+
         SET @NextFlightID = @NextFlightID + 1;
 
         BEGIN TRANSACTION;
