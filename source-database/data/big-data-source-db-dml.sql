@@ -14,8 +14,6 @@ HOW TO USE:
 1.  Run the initial scripts to create and populate the database schema.
 2.  Adjust the @NumberOfFlightsToGenerate variable below to your desired number.
 3.  Execute this script.
-
-Created BY: Google Gemini :)
 ================================================================================
 */
 GO
