@@ -37,7 +37,7 @@ SET NOCOUNT ON;
 -- Change this value to control how many new flights are created.
 -- Each flight will have a random number of tickets.
 -- Default is 1,000. For ~1M tickets, you might set this around 10,000.
-DECLARE @NumberOfFlightsToGenerate INT = 10;
+DECLARE @NumberOfFlightsToGenerate INT = 10000;
 -- ===============================================================================
 
 
@@ -374,7 +374,7 @@ PRINT 'End Time:   ' + CONVERT(VARCHAR, @EndTime, 120);
 PRINT 'Total Duration (seconds): ' + CAST(DATEDIFF(second, @StartTime, @EndTime) AS VARCHAR);
 
 -- ===============================================================================
--- FINAL ROW COUNT VERIFICATION (More Robust)
+-- FINAL ROW COUNT VERIFICATION
 -- ===============================================================================
 PRINT '---------------------------------------------------------';
 PRINT 'Calculating final table row counts...';
