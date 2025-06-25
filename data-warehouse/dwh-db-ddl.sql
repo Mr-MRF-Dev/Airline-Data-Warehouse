@@ -667,9 +667,9 @@ CREATE TABLE Fact_Transaction_Customer_Cargo
 
 
 -- Fact: Ticket Class Sales Daily Snapshot (Periodic)
-DROP TABLE IF EXISTS Fact_Ticket_Class_Sales_Daily;
+DROP TABLE IF EXISTS Fact_Periodic_Ticket_Class_Sales_Daily;
 GO
-CREATE TABLE Fact_Ticket_Class_Sales_Daily
+CREATE TABLE Fact_Periodic_Ticket_Class_Sales_Daily
 (
     DateTime_Key BIGINT,
     -- REFERENCES Dim_DateTime(DateTime_ID),
@@ -753,9 +753,9 @@ CREATE TABLE Fact_Transaction_Maintenance_Log
 
 
 -- Fact: Aircraft Health Check Snapshot Monthly (Periodic)
-DROP TABLE IF EXISTS Fact_Aircraft_Health_Check_Snapshot_Monthly;
+DROP TABLE IF EXISTS Fact_Periodic_Aircraft_Health_Check_Snapshot_Monthly;
 GO
-CREATE TABLE Fact_Aircraft_Health_Check_Snapshot_Monthly
+CREATE TABLE Fact_Periodic_Aircraft_Health_Check_Snapshot_Monthly
 (
     DateTime_Key BIGINT,
     -- REFERENCES Dim_DateTime(DateTime_ID),
@@ -775,15 +775,21 @@ CREATE TABLE Fact_Aircraft_Health_Check_Snapshot_Monthly
 
 
 
--- -- Fact: Aircraft Lifecycle (Accumulating)
--- CREATE TABLE Fact_Aircraft_Lifecycle
--- (
---     Manufacture_Date DATE,
---     First_Service_Date DATE,
---     Last_Maintenance_Date DATE,
---     Retirement_Date DATE,
---     Total_Flight_Hours INT,
---     Total_Downtime INT,
---     Total_Maintenance_Cost DECIMAL(12,2),
---     CONSTRAINT FK_Fact_Aircraft_Lifecycle_Aircraft_SK FOREIGN KEY (Aircraft_SK) REFERENCES Dim_Aircraft(Aircraft_SK)
--- );
+-- Fact: Aircraft Maintenance Lifecycle (Accumulating)
+DROP TABLE IF EXISTS Fact_Accumulate_Aircraft_Maintenance_Lifecycle;
+GO
+CREATE TABLE Fact_Accumulate_Aircraft_Maintenance_Lifecycle
+(
+    Aircraft_ID INT,
+    -- REFERENCES Dim_Aircraft(Aircraft_SK),
+    Total_Flight_Hours DECIMAL(14,2),
+    Total_Revenue DECIMAL(14,2),
+    Total_Flight_Cost DECIMAL(14,2),
+    Total_Maintenances INT,
+    Total_Maintenances_Part_Cost DECIMAL(14,2),
+    Total_Technician_Fee DECIMAL(14,2),
+    Total_Maintenances_Final_Cost DECIMAL(14,2),
+    Max_DownTime_Hours DECIMAL(12,2),
+    Avg_DownTime_Hours DECIMAL(12,2),
+    Min_DownTime_Hours DECIMAL(12,2),
+);
