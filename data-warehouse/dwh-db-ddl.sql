@@ -90,7 +90,7 @@ CREATE TABLE Dim_Aircraft
     Is_Active BIT,
     Effective_Start_Date DATE,
     Effective_End_Date DATE,
-    Is_Current BIT DEFAULT 1,
+    Is_Current BIT,
     -- END of SCD 2
 );
 
@@ -123,7 +123,7 @@ CREATE TABLE Dim_Airport
     Is_Active BIT,
     Effective_Start_Date DATE,
     Effective_End_Date DATE,
-    Is_Current BIT DEFAULT 1,
+    Is_Current BIT,
     -- END of SCD 2
 );
 
@@ -151,7 +151,7 @@ CREATE TABLE Dim_Route
     Is_Active BIT,
     Effective_Start_Date DATE,
     Effective_End_Date DATE,
-    Is_Current BIT DEFAULT 1,
+    Is_Current BIT,
     -- END of SCD 2
 );
 
@@ -172,7 +172,7 @@ CREATE TABLE Dim_Customer_Loyalty_Tier
     Is_Active BIT,
     Effective_Start_Date DATE,
     Effective_End_Date DATE,
-    Is_Current BIT DEFAULT 1,
+    Is_Current BIT,
     -- END of SCD 2
 );
 
@@ -220,12 +220,12 @@ CREATE TABLE Dim_Customer
     -- SCD Fields
     Effective_Start_Date DATE,
     Effective_End_Date DATE,
-    Passport_Code_Change_Bit BIT DEFAULT 0,
-    Phone_Number_Change_Bit BIT DEFAULT 0,
-    Loyalty_Tier_Change_Bit BIT DEFAULT 0,
-    Is_Active_Change_Bit BIT DEFAULT 0,
-    Updated_At_Change_Bit BIT DEFAULT 0,
-    Is_Current BIT DEFAULT 1
+    Passport_Code_Change_Bit BIT,
+    Phone_Number_Change_Bit BIT,
+    Loyalty_Tier_Change_Bit BIT,
+    Is_Active_Change_Bit BIT,
+    Updated_At_Change_Bit BIT,
+    Is_Current BIT
 );
 
 
@@ -253,7 +253,7 @@ CREATE TABLE Dim_Ticket_Class
     Is_Active BIT,
     Effective_Start_Date DATE,
     Effective_End_Date DATE,
-    Is_Current BIT DEFAULT 1,
+    Is_Current BIT,
     -- END of SCD 2
 );
 
@@ -277,7 +277,7 @@ CREATE TABLE Dim_Payment_Method
     Is_Active BIT,
     Effective_Start_Date DATE,
     Effective_End_Date DATE,
-    Is_Current BIT DEFAULT 1,
+    Is_Current BIT,
     -- END of SCD 2
 );
 
@@ -292,7 +292,7 @@ CREATE TABLE Dim_Cargo_Type
     Cargo_Type_ID INT,
     Type_Name VARCHAR(100) NOT NULL,
     Description NVARCHAR(1000),
-    Is_Hazardous BIT NOT NULL DEFAULT 0,
+    Is_Hazardous BIT NOT NULL,
     Max_Weight_KG DECIMAL(10,2),
 );
 
@@ -692,6 +692,8 @@ CREATE TABLE Fact_Ticket_Class_Sales_Daily
 
 
 -- Fact: Customer Lifecycle (Accumulating)
+DROP TABLE IF EXISTS Fact_Accumulate_Customer_Lifecycle;
+GO
 CREATE TABLE Fact_Accumulate_Customer_Lifecycle
 (
     Customer_ID INT,
