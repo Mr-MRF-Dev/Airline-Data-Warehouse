@@ -1,15 +1,14 @@
 /*
 ================================================================================
-SCRIPT: Large Scale Data Generator for AirlineSourceDB (V2)
+SCRIPT: Large Scale Data Generator for AirlineSourceDB (V3)
 DESCRIPTION: This script programmatically generates a large number of records
-             for the Flight, Ticket, and Booking tables.
+             for the Flight, Ticket, Booking, Flight_Crew, and Cargo tables. 
 
-             V2 Changes:
-             - Added logic to create a random number of canceled bookings (5-10)
-               for each flight to make the data more realistic.
-             - Canceled bookings are assigned a random reason and a fee.
-             - Flight Passenger_Count and Revenue now correctly reflect only
-               the confirmed, non-canceled bookings.
+             V3 Changes:
+             - Added logic to generate Flight_Crew for every flight, assigning
+               pilots and cabin crew.
+             - Added logic to generate Cargo for a random percentage of flights.
+             - Added PK management for the Cargo table.
 
 HOW TO USE:
 1.  Run the initial scripts to create and populate the database schema.
@@ -43,7 +42,7 @@ DECLARE @NumberOfFlightsToGenerate INT = 10;
 
 
 PRINT 'Starting data generation process for ' + CAST(@NumberOfFlightsToGenerate AS VARCHAR) + ' flights...';
-PRINT 'Each flight will have a realistic number of tickets, including 5-10 cancellations.';
+PRINT 'Each flight will have tickets, cancellations, crew, and a chance of cargo.';
 
 -- Declare variables for the main loop
 DECLARE @FlightCounter INT = 0;
@@ -53,6 +52,8 @@ DECLARE @StartTime DATETIME = GETDATE();
 DECLARE @NextFlightID INT;
 DECLARE @NextTicketID INT;
 DECLARE @NextBookingID INT;
+DECLARE @NextCargoID INT;
+-- **NEW**
 
 -- Declare variables for the inner ticket loop
 DECLARE @TicketCounter INT;
@@ -60,11 +61,24 @@ DECLARE @TicketsToGenerateForFlight INT;
 DECLARE @TotalRevenueForFlight DECIMAL(15, 2);
 DECLARE @ConfirmedPassengerCount INT;
 
--- **NEW**: Variables for cancellation logic
+-- Variables for cancellation logic
 DECLARE @CancellationsToGenerate INT;
 DECLARE @CancellationCounter INT;
 DECLARE @RandomCancellationReasonID INT;
 DECLARE @CancellationFee DECIMAL(10, 2);
+
+-- **NEW**: Variables for Flight Crew logic
+DECLARE @CrewCounter INT;
+DECLARE @CaptainID INT, @FirstOfficerID INT;
+DECLARE @CabinCrewToGenerate INT;
+DECLARE @RandomCrewID INT, @RandomCrewRoleID INT;
+
+-- **NEW**: Variables for Cargo logic
+DECLARE @CargoCounter INT;
+DECLARE @CargoItemsToGenerate INT;
+DECLARE @RandomCargoTypeID INT;
+DECLARE @RandomTicketForCargo INT;
+
 
 -- Declare variables to hold data for each iteration
 DECLARE @RandomAircraftID INT;
@@ -95,10 +109,15 @@ SELECT @NextTicketID = ISNULL(MAX(Ticket_ID), 0)
 FROM Ticket;
 SELECT @NextBookingID = ISNULL(MAX(Booking_ID), 0)
 FROM Booking;
+SELECT @NextCargoID = ISNULL(MAX(Cargo_ID), 0)
+FROM Cargo;
+-- **NEW**
 
 PRINT 'Starting Flight ID: ' + CAST(@NextFlightID + 1 AS VARCHAR);
 PRINT 'Starting Ticket ID: ' + CAST(@NextTicketID + 1 AS VARCHAR);
 PRINT 'Starting Booking ID: ' + CAST(@NextBookingID + 1 AS VARCHAR);
+PRINT 'Starting Cargo ID: ' + CAST(@NextCargoID + 1 AS VARCHAR);
+-- **NEW**
 
 -- Main loop to create flights
 WHILE @FlightCounter < @NumberOfFlightsToGenerate
@@ -163,9 +182,8 @@ BEGIN
         SET @TicketsToGenerateForFlight = CAST(RAND() * (@AircraftCapacity * 0.4) + (@AircraftCapacity * 0.5) AS INT);
         IF @TicketsToGenerateForFlight > @AircraftCapacity SET @TicketsToGenerateForFlight = @AircraftCapacity;
 
-        -- **NEW**: Determine how many of this flight's bookings will be canceled
-        SET @CancellationsToGenerate = 5 + (ABS(CHECKSUM(NEWID())) % 6); -- Generate 5 to 10 cancellations
-        IF @CancellationsToGenerate >= @TicketsToGenerateForFlight SET @CancellationsToGenerate = @TicketsToGenerateForFlight - 1; -- Ensure at least 1 confirmed ticket
+        SET @CancellationsToGenerate = 5 + (ABS(CHECKSUM(NEWID())) % 6);
+        IF @CancellationsToGenerate >= @TicketsToGenerateForFlight SET @CancellationsToGenerate = @TicketsToGenerateForFlight - 1;
         SET @CancellationCounter = 0;
 
         WHILE @TicketCounter < @TicketsToGenerateForFlight
@@ -194,16 +212,13 @@ BEGIN
         SET @SeatLetter = CHAR((@TicketCounter % 6) + 65);
         SET @SeatNumber = CAST(@SeatRow AS VARCHAR) + @SeatLetter;
 
-        -- **NEW CANCELLATION LOGIC**
         IF @CancellationCounter < @CancellationsToGenerate
             BEGIN
-            -- This is a CANCELED booking
             SELECT TOP 1
                 @RandomCancellationReasonID = Cancellation_ID
             FROM Booking_Cancellation_Reason
             ORDER BY NEWID();
             SET @CancellationFee = @FinalPrice * (RAND() * 0.2 + 0.1);
-            -- 10-30% cancellation fee
 
             INSERT INTO Ticket
                 (Ticket_ID, Flight_ID, Class_ID, Ticket_Status_ID, Price, Discount, Seat_Number)
@@ -214,17 +229,12 @@ BEGIN
             INSERT INTO Booking
                 (Booking_ID, Ticket_ID, Customer_ID, Payment_Method_ID, Booking_Date, Total_Amount, Cancellation_Reason_ID, Cancellation_Fee)
             VALUES
-                (
-                    @NextBookingID, @NextTicketID, @RandomCustomerID, @RandomPaymentMethodID,
-                    DATEADD(day, - (CAST(RAND() * 30 + 1 AS INT)), @ScheduledDeparture),
-                    @FinalPrice, @RandomCancellationReasonID, @CancellationFee
-                );
+                ( @NextBookingID, @NextTicketID, @RandomCustomerID, @RandomPaymentMethodID, DATEADD(day, -(CAST(RAND() * 30 + 1 AS INT)), @ScheduledDeparture), @FinalPrice, @RandomCancellationReasonID, @CancellationFee );
 
             SET @CancellationCounter = @CancellationCounter + 1;
         END
             ELSE
             BEGIN
-            -- This is a CONFIRMED booking
             INSERT INTO Ticket
                 (Ticket_ID, Flight_ID, Class_ID, Ticket_Status_ID, Price, Discount, Seat_Number)
             VALUES
@@ -234,20 +244,103 @@ BEGIN
             INSERT INTO Booking
                 (Booking_ID, Ticket_ID, Customer_ID, Payment_Method_ID, Booking_Date, Total_Amount, Cancellation_Reason_ID, Cancellation_Fee)
             VALUES
-                (
-                    @NextBookingID, @NextTicketID, @RandomCustomerID, @RandomPaymentMethodID,
-                    DATEADD(day, - (CAST(RAND() * 30 + 1 AS INT)), @ScheduledDeparture),
-                    @FinalPrice, NULL, NULL
-                );
+                ( @NextBookingID, @NextTicketID, @RandomCustomerID, @RandomPaymentMethodID, DATEADD(day, -(CAST(RAND() * 30 + 1 AS INT)), @ScheduledDeparture), @FinalPrice, NULL, NULL );
 
             SET @TotalRevenueForFlight = @TotalRevenueForFlight + @FinalPrice;
             SET @ConfirmedPassengerCount = @ConfirmedPassengerCount + 1;
         END
-
         SET @TicketCounter = @TicketCounter + 1;
     END
 
-        -- 4. Now, update the flight with the final passenger count and revenue
+        -- 4. **NEW**: Generate Flight Crew
+        ----------------------------------------------------------------
+        -- Select one Captain
+        SELECT TOP 1
+        @CaptainID = Crew_ID
+    FROM Crew
+    WHERE Crew_Role_Type_ID = 1
+    ORDER BY NEWID();
+        -- Select a different First Officer
+        SELECT TOP 1
+        @FirstOfficerID = Crew_ID
+    FROM Crew
+    WHERE Crew_Role_Type_ID = 1 AND Crew_ID <> @CaptainID
+    ORDER BY NEWID();
+
+        IF @CaptainID IS NOT NULL AND @FirstOfficerID IS NOT NULL
+        BEGIN
+        INSERT INTO Flight_Crew
+            (Flight_ID, Crew_ID, Crew_Role_ID, Assignment_Date, Duration_Hours, Hourly_Fee)
+        VALUES
+            (@NextFlightID, @CaptainID, 1, @FlightDate, @FlightDurationMinutes / 60.0, 150.00);
+        INSERT INTO Flight_Crew
+            (Flight_ID, Crew_ID, Crew_Role_ID, Assignment_Date, Duration_Hours, Hourly_Fee)
+        VALUES
+            (@NextFlightID, @FirstOfficerID, 2, @FlightDate, @FlightDurationMinutes / 60.0, 100.00);
+    END
+
+        -- Select random cabin crew
+        SET @CrewCounter = 0;
+        SET @CabinCrewToGenerate = 2 + (ABS(CHECKSUM(NEWID())) % 5); -- 2 to 6 cabin crew
+        WHILE @CrewCounter < @CabinCrewToGenerate
+        BEGIN
+        SELECT TOP 1
+            @RandomCrewID = Crew_ID
+        FROM Crew
+        WHERE Crew_Role_Type_ID = 2
+        ORDER BY NEWID();
+        SELECT TOP 1
+            @RandomCrewRoleID = Crew_Role_ID
+        FROM Crew_Role
+        WHERE Crew_Role_Type_ID = 2
+        ORDER BY NEWID();
+
+        IF @RandomCrewID IS NOT NULL AND NOT EXISTS (SELECT 1
+            FROM Flight_Crew
+            WHERE Flight_ID = @NextFlightID AND Crew_ID = @RandomCrewID)
+            BEGIN
+            INSERT INTO Flight_Crew
+                (Flight_ID, Crew_ID, Crew_Role_ID, Assignment_Date, Duration_Hours, Hourly_Fee)
+            VALUES
+                (@NextFlightID, @RandomCrewID, @RandomCrewRoleID, @FlightDate, @FlightDurationMinutes / 60.0, 40.00);
+        END
+        SET @CrewCounter = @CrewCounter + 1;
+    END
+
+        -- 5. **NEW**: Generate Cargo (40% chance)
+        ----------------------------------------------------------------
+        IF RAND() < 0.4
+        BEGIN
+        SET @CargoCounter = 0;
+        SET @CargoItemsToGenerate = 5 + (ABS(CHECKSUM(NEWID())) % 16);
+        -- 5 to 20 cargo items
+        WHILE @CargoCounter < @CargoItemsToGenerate
+            BEGIN
+            SET @NextCargoID = @NextCargoID + 1;
+            SELECT TOP 1
+                @RandomCargoTypeID = Cargo_Type_ID
+            FROM Cargo_Type
+            ORDER BY NEWID();
+            -- Find a random confirmed ticket on this flight to associate the cargo with
+            SELECT TOP 1
+                @RandomTicketForCargo = Ticket_ID
+            FROM Ticket
+            WHERE Flight_ID = @NextFlightID AND Ticket_Status_ID = 1
+            ORDER BY NEWID();
+
+            IF @RandomTicketForCargo IS NOT NULL
+                BEGIN
+                INSERT INTO Cargo
+                    (Cargo_ID, Cargo_Status_ID, Ticket_ID, Flight_ID, Cargo_Type_ID, Weight_KG, Volume_CM3, Declared_Value, Cargo_Delivery_Date)
+                VALUES
+                    (@NextCargoID, 3, @RandomTicketForCargo, @NextFlightID, @RandomCargoTypeID, RAND()*200, RAND()*10000, RAND()*5000, DATEADD(day, 1, @FlightDate));
+            -- Status 3 = Loaded onto Aircraft
+            END
+            SET @CargoCounter = @CargoCounter + 1;
+        END
+    END
+
+        -- 6. Update the flight with the final passenger count and revenue
         ----------------------------------------------------------------
         UPDATE Flight
         SET Passenger_Count = @ConfirmedPassengerCount,
@@ -259,7 +352,7 @@ BEGIN
     BEGIN CATCH
         IF @@TRANCOUNT > 0
             ROLLBACK TRANSACTION;
-        
+
         PRINT 'Error on flight generation loop #' + CAST(@FlightCounter + 1 AS VARCHAR) + ' for planned FlightID ' + CAST(@NextFlightID AS VARCHAR) + ': ' + ERROR_MESSAGE();
     END CATCH
 
