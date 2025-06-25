@@ -20,7 +20,7 @@ COPY ./storage-area/*.sql /scripts/
 RUN /bin/bash -c "/opt/mssql/bin/sqlservr & sleep 30 & /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P Admin@Pass -C -i /scripts/source-db-ddl.sql \
     && /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P Admin@Pass -C -i /scripts/dwh-db-ddl.sql \
     && /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P Admin@Pass -C -i /scripts/sa-db-ddl.sql \
-    && /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P Admin@Pass -C -i /scripts/data/data-source-db-dml-1.sql \
+    && /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P Admin@Pass -C -i /scripts/data/data-source-db-dml.sql \
     "
 
 CMD [ "/opt/mssql/bin/sqlservr" ]
