@@ -478,3 +478,93 @@ VALUES
     (3, 3, 2, '2024-06-26', 6.00, 100.00, 150.00, '2024-06-26 13:00:00', '2024-06-26 19:00:00', 4),
     (3, 7, 3, '2024-06-26', 7.00, 50.00, 100.00, '2024-06-26 13:00:00', '2024-06-26 20:00:00', 5);
 GO
+
+
+
+GO
+-- ===============================================================================
+-- FINAL ROW COUNT VERIFICATION
+-- ===============================================================================
+PRINT '---------------------------------------------------------';
+PRINT 'Calculating final table row counts...';
+PRINT '---------------------------------------------------------';
+
+DECLARE @RowCount INT;
+
+SELECT @RowCount = COUNT(*)
+FROM Aircraft;
+PRINT 'Aircraft: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Airport;
+PRINT 'Airport: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Route;
+PRINT 'Route: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Loyalty_Tier;
+PRINT 'Loyalty_Tier: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Customer;
+PRINT 'Customer: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Class;
+PRINT 'Class: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Payment_Method;
+PRINT 'Payment_Method: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Cargo_Type;
+PRINT 'Cargo_Type: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Employee;
+PRINT 'Employee: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Crew_Role_Type;
+PRINT 'Crew_Role_Type: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Crew_Role;
+PRINT 'Crew_Role: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Crew;
+PRINT 'Crew: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Technician;
+PRINT 'Technician: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Maintenance_Type;
+PRINT 'Maintenance_Type: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Flight_Status;
+PRINT 'Flight_Status: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Booking_Cancellation_Reason;
+PRINT 'Booking_Cancellation_Reason: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Ticket_Status;
+PRINT 'Ticket_Status: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Cargo_Status;
+PRINT 'Cargo_Status: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Maintenance;
+PRINT 'Maintenance: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Feedback;
+PRINT 'Feedback: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Flight;
+PRINT 'Flight: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Ticket;
+PRINT 'Ticket: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Booking;
+PRINT 'Booking: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Flight_Crew;
+PRINT 'Flight_Crew: ' + CAST(@RowCount AS VARCHAR(20));
+SELECT @RowCount = COUNT(*)
+FROM Cargo;
+PRINT 'Cargo: ' + CAST(@RowCount AS VARCHAR(20));
+PRINT '---------------------------------------------------------';
+GO
