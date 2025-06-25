@@ -28,7 +28,8 @@ DROP TABLE IF EXISTS Dim_DateTime;
 GO
 CREATE TABLE Dim_DateTime
 (
-    DateTime_ID BIGINT PRIMARY KEY, -- like 202504291050, is 2025-04-29 10:50 (pattern: YYYYMMDDhhmm)
+    DateTime_ID BIGINT,
+    -- DateTime_ID like 202504291050, is 2025-04-29 10:50 (pattern: YYYYMMDDhhmm)
     Full_DateTime_Alternate_Key DATETIME,
     Persian_Full_DateTime_Alternate_Key VARCHAR(16),
     -- Date
@@ -72,7 +73,7 @@ GO
 CREATE TABLE Dim_Aircraft
 (
     -- aircraft id and registration
-    Aircraft_SK INT PRIMARY KEY,
+    Aircraft_SK INT,
     Aircraft_ID INT,
     Registration_Number VARCHAR(20),
     -- Aircraft information
@@ -102,8 +103,7 @@ GO
 CREATE TABLE Dim_Airport
 (
     -- airport information
-    Airport_SK INT PRIMARY KEY,
-    Airport_ID INT,
+    Airport_SK INT,
     Airport_Code VARCHAR(10),
     Airport_Name VARCHAR(100),
     IATA_Code CHAR(3),
@@ -135,7 +135,7 @@ DROP TABLE IF EXISTS Dim_Route;
 GO
 CREATE TABLE Dim_Route
 (
-    Route_SK INT PRIMARY KEY,
+    Route_SK INT,
     Route_ID INT,
     Route_Code VARCHAR(20),
     Route_Name VARCHAR(100),
@@ -163,7 +163,7 @@ DROP TABLE IF EXISTS Dim_Customer_Loyalty_Tier;
 GO
 CREATE TABLE Dim_Customer_Loyalty_Tier
 (
-    Loyalty_Tier_SK INT PRIMARY KEY,
+    Loyalty_Tier_SK INT,
     Loyalty_Tier_ID INT,
     Tier_Name VARCHAR(50),
     Benefits NVARCHAR(1000),
@@ -184,7 +184,7 @@ DROP TABLE IF EXISTS Dim_Customer;
 GO
 CREATE TABLE Dim_Customer
 (
-    Customer_SK INT PRIMARY KEY,
+    Customer_SK INT,
     Customer_ID INT,
     -- Passport Code is SCD 2
     Passport_Code VARCHAR(20),
@@ -236,7 +236,7 @@ DROP TABLE IF EXISTS Dim_Ticket_Class;
 GO
 CREATE TABLE Dim_Ticket_Class
 (
-    Class_SK INT PRIMARY KEY,
+    Class_SK INT,
     Class_ID INT,
     Class_Code VARCHAR(10) NOT NULL,
     Class_Name VARCHAR(50) NOT NULL,
@@ -266,7 +266,7 @@ GO
 CREATE TABLE Dim_Payment_Method
 (
     -- payment method information
-    Payment_Method_ID INT PRIMARY KEY,
+    Payment_Method_ID INT,
     Method_Name VARCHAR(50),
     Description NVARCHAR(200),
     -- provider information
@@ -289,7 +289,7 @@ DROP TABLE IF EXISTS Dim_Cargo_Type;
 GO
 CREATE TABLE Dim_Cargo_Type
 (
-    Cargo_Type_ID INT PRIMARY KEY,
+    Cargo_Type_ID INT,
     Type_Name VARCHAR(100) NOT NULL,
     Description NVARCHAR(1000),
     Is_Hazardous BIT NOT NULL DEFAULT 0,
@@ -304,7 +304,7 @@ DROP TABLE IF EXISTS Dim_Cargo_Status;
 GO
 CREATE TABLE Dim_Cargo_Status
 (
-    Cargo_Status_ID INT PRIMARY KEY,
+    Cargo_Status_ID INT,
     Name VARCHAR(100) NOT NULL,
     Description NVARCHAR(1000),
 );
@@ -317,7 +317,7 @@ DROP TABLE IF EXISTS Dim_Crew_Role;
 GO
 CREATE TABLE Dim_Crew_Role
 (
-    Crew_Role_ID INT PRIMARY KEY,
+    Crew_Role_ID INT,
     Role_Name VARCHAR(50) NOT NULL,
     Role_Description NVARCHAR(500),
     Basic_Fee_Per_Hour DECIMAL(10,2) NOT NULL,
@@ -334,7 +334,7 @@ DROP TABLE IF EXISTS Dim_Crew;
 GO
 CREATE TABLE Dim_Crew
 (
-    Crew_ID INT PRIMARY KEY,
+    Crew_ID INT,
     Employee_ID INT,
     Role_Type_ID INT,
     Role_Type_Name VARCHAR (50),
@@ -370,7 +370,7 @@ DROP TABLE IF EXISTS Dim_Technician;
 GO
 CREATE TABLE Dim_Technician
 (
-    Technician_ID INT PRIMARY KEY,
+    Technician_ID INT,
     Employee_ID INT,
     First_Name VARCHAR(50),
     Last_Name VARCHAR(50),
@@ -407,7 +407,7 @@ DROP TABLE IF EXISTS Dim_Maintenance_Type;
 GO
 CREATE TABLE Dim_Maintenance_Type
 (
-    Maintenance_Type_ID INT PRIMARY KEY,
+    Maintenance_Type_ID INT,
     Type_Name VARCHAR(100),
     Issue_Description NVARCHAR(2000),
     Resolution_Notes NVARCHAR(2000),
@@ -426,7 +426,7 @@ DROP TABLE IF EXISTS Dim_Flight_Status;
 GO
 CREATE TABLE Dim_Flight_Status
 (
-    Flight_Status_ID INT PRIMARY KEY,
+    Flight_Status_ID INT,
     Status_Name VARCHAR(50),
     Description NVARCHAR(200),
 );
@@ -439,7 +439,7 @@ DROP TABLE IF EXISTS Dim_Booking_Cancellation_Reason;
 GO
 CREATE TABLE Dim_Booking_Cancellation_Reason
 (
-    Cancellation_ID INT PRIMARY KEY,
+    Cancellation_ID INT,
     Reason NVARCHAR(200),
     Description NVARCHAR(1000)
 );
@@ -452,7 +452,7 @@ DROP TABLE IF EXISTS Dim_Ticket_Status;
 GO
 CREATE TABLE Dim_Ticket_Status
 (
-    Status_ID INT PRIMARY KEY,
+    Status_ID INT,
     Name VARCHAR(50),
     Description NVARCHAR(1000)
 );
@@ -466,7 +466,7 @@ GO
 CREATE TABLE Dim_Flight
 (
     -- flight information
-    Flight_ID INT PRIMARY KEY,
+    Flight_ID INT,
     Flight_Number VARCHAR(10),
     Scheduled_Departure DATETIME,
     Scheduled_Arrival DATETIME,
@@ -506,16 +506,26 @@ DROP TABLE IF EXISTS Fact_Accumulate_Flight_Operations;
 GO
 CREATE TABLE Fact_Accumulate_Flight_Operations
 (
-    Flight_ID INT, -- REFERENCES Dim_Flight(Flight_ID),
-    Aircraft_ID INT, -- REFERENCES Dim_Aircraft(Aircraft_SK),
-    Route_ID INT, -- REFERENCES Dim_Route(Route_SK),
-    Departure_Airport_ID INT, -- REFERENCES Dim_Airport(Airport_SK),
-    Arrival_Airport_ID INT, -- REFERENCES Dim_Airport(Airport_SK),
-    Flight_Status_ID INT, -- REFERENCES Dim_Flight_Status(Flight_Status_ID),
-    Scheduled_Departure BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
-    Scheduled_Arrival BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
-    Actual_Departure BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
-    Actual_Arrival BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Flight_ID INT,
+    -- REFERENCES Dim_Flight(Flight_ID),
+    Aircraft_ID INT,
+    -- REFERENCES Dim_Aircraft(Aircraft_SK),
+    Route_ID INT,
+    -- REFERENCES Dim_Route(Route_SK),
+    Departure_Airport_ID INT,
+    -- REFERENCES Dim_Airport(Airport_SK),
+    Arrival_Airport_ID INT,
+    -- REFERENCES Dim_Airport(Airport_SK),
+    Flight_Status_ID INT,
+    -- REFERENCES Dim_Flight_Status(Flight_Status_ID),
+    Scheduled_Departure BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
+    Scheduled_Arrival BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
+    Actual_Departure BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
+    Actual_Arrival BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
     Departure_Delay_Minutes INT,
     Arrival_Delay_Minutes INT,
     Flight_Duration_Minutes INT,
@@ -534,11 +544,16 @@ DROP TABLE IF EXISTS Fact_Transaction_Crew_Flight_Assignment;
 GO
 CREATE TABLE Fact_Transaction_Crew_Flight_Assignment
 (
-    Flight_ID INT, -- REFERENCES Dim_Flight(Flight_ID),
-    Crew_ID INT, -- REFERENCES Dim_Crew(Crew_ID),
-    Crew_Role_ID INT, -- REFERENCES Dim_Crew_Role(Crew_Role_ID),
-    Start_Time BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
-    End_Time BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Flight_ID INT,
+    -- REFERENCES Dim_Flight(Flight_ID),
+    Crew_ID INT,
+    -- REFERENCES Dim_Crew(Crew_ID),
+    Crew_Role_ID INT,
+    -- REFERENCES Dim_Crew_Role(Crew_Role_ID),
+    Start_Time BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
+    End_Time BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
     Duration_Hours DECIMAL(6,2),
     Hourly_Fee DECIMAL(8,2),
     Total_Fee DECIMAL(10,2),
@@ -554,10 +569,14 @@ DROP TABLE IF EXISTS Fact_Periodic_Route_Flight_Snapshot_Monthly;
 GO
 CREATE TABLE Fact_Periodic_Route_Flight_Snapshot_Monthly
 (
-    DateTime_Key BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
-    Route_ID INT, -- REFERENCES Dim_Route(Route_SK),
-    Departure_Airport_ID INT, -- REFERENCES Dim_Airport(Airport_SK),
-    Arrival_Airport_ID INT, -- REFERENCES Dim_Airport(Airport_SK),
+    DateTime_Key BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
+    Route_ID INT,
+    -- REFERENCES Dim_Route(Route_SK),
+    Departure_Airport_ID INT,
+    -- REFERENCES Dim_Airport(Airport_SK),
+    Arrival_Airport_ID INT,
+    -- REFERENCES Dim_Airport(Airport_SK),
     Total_Flights_Count INT,
     Total_Departure_Delay_Minutes INT,
     Total_Arrival_Delay_Minutes INT,
@@ -585,15 +604,24 @@ DROP TABLE IF EXISTS Fact_Transaction_Booking_Ticket;
 GO
 CREATE TABLE Fact_Transaction_Booking_Ticket
 (
-    Flight_ID INT, -- REFERENCES Dim_Flight(Flight_ID),
-    Ticket_Class_ID INT, -- REFERENCES Dim_Ticket_Class(Class_SK),
-    Ticket_Status_ID INT, -- REFERENCES Dim_Ticket_Status(Status_ID),
-    Customer_ID INT, -- REFERENCES Dim_Customer(Customer_SK),
-    Customer_Loyalty_Tier_ID INT, -- REFERENCES Dim_Customer_Loyalty_Tier(Loyalty_Tier_SK),
-    Payment_Method_ID INT, -- REFERENCES Dim_Payment_Method(Payment_Method_ID),
-    Cancellation_Reason_ID INT, -- REFERENCES Dim_Booking_Cancellation_Reason(Cancellation_ID),
-    Booking_Created_At BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
-    Booking_Update_At BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Flight_ID INT,
+    -- REFERENCES Dim_Flight(Flight_ID),
+    Ticket_Class_ID INT,
+    -- REFERENCES Dim_Ticket_Class(Class_SK),
+    Ticket_Status_ID INT,
+    -- REFERENCES Dim_Ticket_Status(Status_ID),
+    Customer_ID INT,
+    -- REFERENCES Dim_Customer(Customer_SK),
+    Customer_Loyalty_Tier_ID INT,
+    -- REFERENCES Dim_Customer_Loyalty_Tier(Loyalty_Tier_SK),
+    Payment_Method_ID INT,
+    -- REFERENCES Dim_Payment_Method(Payment_Method_ID),
+    Cancellation_Reason_ID INT,
+    -- REFERENCES Dim_Booking_Cancellation_Reason(Cancellation_ID),
+    Booking_Created_At BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
+    Booking_Update_At BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
     Price DECIMAL(10,2),
     Discount DECIMAL(10,2),
     Final_Price DECIMAL(10,2),
@@ -614,13 +642,20 @@ DROP TABLE IF EXISTS Fact_Transaction_Customer_Cargo;
 GO
 CREATE TABLE Fact_Transaction_Customer_Cargo
 (
-    Flight_ID INT, -- REFERENCES Dim_Flight(Flight_ID),
-    Ticket_Class_ID INT, -- REFERENCES Dim_Ticket_Class(Class_SK),
-    Customer_ID INT, -- REFERENCES Dim_Customer(Customer_SK),
-    Customer_Loyalty_Tier_ID INT, -- REFERENCES Dim_Customer_Loyalty_Tier(Loyalty_Tier_SK),
-    Cargo_Type_ID INT, -- REFERENCES Dim_Cargo_Type(Cargo_Type_ID),
-    Cargo_Status_ID INT, -- REFERENCES Dim_Cargo_Status(Cargo_Status_ID),
-    Cargo_Delivery_Date BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Flight_ID INT,
+    -- REFERENCES Dim_Flight(Flight_ID),
+    Ticket_Class_ID INT,
+    -- REFERENCES Dim_Ticket_Class(Class_SK),
+    Customer_ID INT,
+    -- REFERENCES Dim_Customer(Customer_SK),
+    Customer_Loyalty_Tier_ID INT,
+    -- REFERENCES Dim_Customer_Loyalty_Tier(Loyalty_Tier_SK),
+    Cargo_Type_ID INT,
+    -- REFERENCES Dim_Cargo_Type(Cargo_Type_ID),
+    Cargo_Status_ID INT,
+    -- REFERENCES Dim_Cargo_Status(Cargo_Status_ID),
+    Cargo_Delivery_Date BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
     Weight_KG DECIMAL(10,2),
     Volume_CM3 DECIMAL(10,2),
     Declared_Value DECIMAL(10,2),
@@ -636,9 +671,12 @@ DROP TABLE IF EXISTS Fact_Ticket_Class_Sales_Daily;
 GO
 CREATE TABLE Fact_Ticket_Class_Sales_Daily
 (
-    DateTime_Key BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
-    Ticket_Class_ID INT, -- REFERENCES Dim_Ticket_Class(Class_SK),
-    Route_ID INT, -- REFERENCES Dim_Route(Route_SK),
+    DateTime_Key BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
+    Ticket_Class_ID INT,
+    -- REFERENCES Dim_Ticket_Class(Class_SK),
+    Route_ID INT,
+    -- REFERENCES Dim_Route(Route_SK),
     Total_Tickets_Sold INT,
     Total_Price DECIMAL(10,2),
     Avg_Price DECIMAL(10,2),
@@ -656,11 +694,16 @@ CREATE TABLE Fact_Ticket_Class_Sales_Daily
 -- Fact: Customer Lifecycle (Accumulating)
 CREATE TABLE Fact_Accumulate_Customer_Lifecycle
 (
-    Customer_ID INT, -- REFERENCES Dim_Customer(Customer_SK),
-    Sign_up_Date BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
-    First_Booking_Date BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
-    Last_Booking_Date BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
-    Loyalty_Change_Date BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Customer_ID INT,
+    -- REFERENCES Dim_Customer(Customer_SK),
+    Sign_up_Date BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
+    First_Booking_Date BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
+    Last_Booking_Date BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
+    Loyalty_Change_Date BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
     Total_Tickets_Booking INT,
     Total_Successfully_Flight INT,
     Total_Cancellation INT,
@@ -686,12 +729,18 @@ DROP TABLE IF EXISTS Fact_Transaction_Maintenance_Log;
 GO
 CREATE TABLE Fact_Transaction_Maintenance_Log
 (
-    Aircraft_ID INT, -- REFERENCES Dim_Aircraft(Aircraft_SK),
-    Airport_ID INT, -- REFERENCES Dim_Airport(Airport_SK),
-    Maintenance_Type_ID INT, -- REFERENCES Dim_Maintenance_Type(Maintenance_Type_ID),
-    Supervise_Technician_ID INT, -- REFERENCES Dim_Technician(Technician_ID),
-    Start_Date_Key BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
-    End_Date_Key BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
+    Aircraft_ID INT,
+    -- REFERENCES Dim_Aircraft(Aircraft_SK),
+    Airport_ID INT,
+    -- REFERENCES Dim_Airport(Airport_SK),
+    Maintenance_Type_ID INT,
+    -- REFERENCES Dim_Maintenance_Type(Maintenance_Type_ID),
+    Supervise_Technician_ID INT,
+    -- REFERENCES Dim_Technician(Technician_ID),
+    Start_Date_Key BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
+    End_Date_Key BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
     Duration_Hours DECIMAL(6,2),
     Part_Cost DECIMAL(10,2),
     Final_Cost DECIMAL(10,2),
@@ -706,8 +755,10 @@ DROP TABLE IF EXISTS Fact_Aircraft_Health_Check_Snapshot_Monthly;
 GO
 CREATE TABLE Fact_Aircraft_Health_Check_Snapshot_Monthly
 (
-    DateTime_Key BIGINT, -- REFERENCES Dim_DateTime(DateTime_ID),
-    Aircraft_ID INT, -- REFERENCES Dim_Aircraft(Aircraft_SK),
+    DateTime_Key BIGINT,
+    -- REFERENCES Dim_DateTime(DateTime_ID),
+    Aircraft_ID INT,
+    -- REFERENCES Dim_Aircraft(Aircraft_SK),
     Total_Flight_Hours DECIMAL(12,2),
     Total_Revenue DECIMAL(12,2),
     Total_Flight_Cost DECIMAL(12,2),
