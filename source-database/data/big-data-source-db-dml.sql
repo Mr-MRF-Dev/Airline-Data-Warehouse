@@ -1,10 +1,17 @@
 /*
 ================================================================================
-SCRIPT: Large Scale Data Generator for AirlineSourceDB (V1)
+SCRIPT: Large Scale Data Generator for AirlineSourceDB (V2)
 DESCRIPTION: This script programmatically generates a large number of records
              for the Flight, Ticket, and Booking tables.
 
-HOW TO USE:ّ
+             V2 Changes:
+             - Added logic to create a random number of canceled bookings (5-10)
+               for each flight to make the data more realistic.
+             - Canceled bookings are assigned a random reason and a fee.
+             - Flight Passenger_Count and Revenue now correctly reflect only
+               the confirmed, non-canceled bookings.
+
+HOW TO USE:
 1.  Run the initial scripts to create and populate the database schema.
 2.  Adjust the @NumberOfFlightsToGenerate variable below to your desired number.
 3.  Execute this script.
@@ -31,18 +38,18 @@ SET NOCOUNT ON;
 -- Change this value to control how many new flights are created.
 -- Each flight will have a random number of tickets.
 -- Default is 1,000. For ~1M tickets, you might set this around 10,000.
-DECLARE @NumberOfFlightsToGenerate INT = 10000;
+DECLARE @NumberOfFlightsToGenerate INT = 10;
 -- ===============================================================================
 
 
 PRINT 'Starting data generation process for ' + CAST(@NumberOfFlightsToGenerate AS VARCHAR) + ' flights...';
-PRINT 'Each flight will have a realistic number of tickets/bookings.';
+PRINT 'Each flight will have a realistic number of tickets, including 5-10 cancellations.';
 
 -- Declare variables for the main loop
 DECLARE @FlightCounter INT = 0;
 DECLARE @StartTime DATETIME = GETDATE();
 
--- **FIX**: Declare variables to manually manage Primary Keys
+-- Declare variables to manually manage Primary Keys
 DECLARE @NextFlightID INT;
 DECLARE @NextTicketID INT;
 DECLARE @NextBookingID INT;
@@ -51,6 +58,13 @@ DECLARE @NextBookingID INT;
 DECLARE @TicketCounter INT;
 DECLARE @TicketsToGenerateForFlight INT;
 DECLARE @TotalRevenueForFlight DECIMAL(15, 2);
+DECLARE @ConfirmedPassengerCount INT;
+
+-- **NEW**: Variables for cancellation logic
+DECLARE @CancellationsToGenerate INT;
+DECLARE @CancellationCounter INT;
+DECLARE @RandomCancellationReasonID INT;
+DECLARE @CancellationFee DECIMAL(10, 2);
 
 -- Declare variables to hold data for each iteration
 DECLARE @RandomAircraftID INT;
@@ -74,7 +88,7 @@ DECLARE @SeatLetter CHAR(1);
 DECLARE @FuelCost DECIMAL(15, 2);
 DECLARE @ServiceCost DECIMAL(15, 2);
 
--- **FIX**: Initialize the next available IDs by finding the current MAX ID in each table.
+-- Initialize the next available IDs by finding the current MAX ID in each table.
 SELECT @NextFlightID = ISNULL(MAX(Flight_ID), 0)
 FROM Flight;
 SELECT @NextTicketID = ISNULL(MAX(Ticket_ID), 0)
@@ -119,7 +133,7 @@ BEGIN
         SET @FlightDate = DATEADD(day, CAST(RAND() * 365 as INT), '2025-01-01');
         SET @ScheduledDeparture = DATEADD(minute, CAST(RAND() * 1440 as INT), CAST(@FlightDate AS DATETIME));
         SET @ScheduledArrival = DATEADD(minute, @FlightDurationMinutes, @ScheduledDeparture);
-
+        
         SET @NextFlightID = @NextFlightID + 1;
 
         BEGIN TRANSACTION;
@@ -145,8 +159,14 @@ BEGIN
         ----------------------------------------------------------------
         SET @TicketCounter = 0;
         SET @TotalRevenueForFlight = 0.00;
+        SET @ConfirmedPassengerCount = 0;
         SET @TicketsToGenerateForFlight = CAST(RAND() * (@AircraftCapacity * 0.4) + (@AircraftCapacity * 0.5) AS INT);
         IF @TicketsToGenerateForFlight > @AircraftCapacity SET @TicketsToGenerateForFlight = @AircraftCapacity;
+
+        -- **NEW**: Determine how many of this flight's bookings will be canceled
+        SET @CancellationsToGenerate = 5 + (ABS(CHECKSUM(NEWID())) % 6); -- Generate 5 to 10 cancellations
+        IF @CancellationsToGenerate >= @TicketsToGenerateForFlight SET @CancellationsToGenerate = @TicketsToGenerateForFlight - 1; -- Ensure at least 1 confirmed ticket
+        SET @CancellationCounter = 0;
 
         WHILE @TicketCounter < @TicketsToGenerateForFlight
         BEGIN
@@ -174,28 +194,63 @@ BEGIN
         SET @SeatLetter = CHAR((@TicketCounter % 6) + 65);
         SET @SeatNumber = CAST(@SeatRow AS VARCHAR) + @SeatLetter;
 
-        INSERT INTO Ticket
-            (Ticket_ID, Flight_ID, Class_ID, Ticket_Status_ID, Price, Discount, Seat_Number)
-        VALUES
-            ( @NextTicketID, @NextFlightID, @RandomClassID, 1, @FinalPrice, 0, @SeatNumber );
+        -- **NEW CANCELLATION LOGIC**
+        IF @CancellationCounter < @CancellationsToGenerate
+            BEGIN
+            -- This is a CANCELED booking
+            SELECT TOP 1
+                @RandomCancellationReasonID = Cancellation_ID
+            FROM Booking_Cancellation_Reason
+            ORDER BY NEWID();
+            SET @CancellationFee = @FinalPrice * (RAND() * 0.2 + 0.1);
+            -- 10-30% cancellation fee
 
-        INSERT INTO Booking
-            (Booking_ID, Ticket_ID, Customer_ID, Payment_Method_ID, Booking_Date, Total_Amount, Cancellation_Reason_ID, Cancellation_Fee)
-        VALUES
-            (
-                @NextBookingID, @NextTicketID, @RandomCustomerID, @RandomPaymentMethodID,
-                DATEADD(day, - (CAST(RAND() * 30 + 1 AS INT)), @ScheduledDeparture),
-                @FinalPrice, NULL, NULL
-            );
+            INSERT INTO Ticket
+                (Ticket_ID, Flight_ID, Class_ID, Ticket_Status_ID, Price, Discount, Seat_Number)
+            VALUES
+                ( @NextTicketID, @NextFlightID, @RandomClassID, 2, @FinalPrice, 0, @SeatNumber );
+            -- Status 2 = Cancelled
 
-        SET @TotalRevenueForFlight = @TotalRevenueForFlight + @FinalPrice;
+            INSERT INTO Booking
+                (Booking_ID, Ticket_ID, Customer_ID, Payment_Method_ID, Booking_Date, Total_Amount, Cancellation_Reason_ID, Cancellation_Fee)
+            VALUES
+                (
+                    @NextBookingID, @NextTicketID, @RandomCustomerID, @RandomPaymentMethodID,
+                    DATEADD(day, - (CAST(RAND() * 30 + 1 AS INT)), @ScheduledDeparture),
+                    @FinalPrice, @RandomCancellationReasonID, @CancellationFee
+                );
+
+            SET @CancellationCounter = @CancellationCounter + 1;
+        END
+            ELSE
+            BEGIN
+            -- This is a CONFIRMED booking
+            INSERT INTO Ticket
+                (Ticket_ID, Flight_ID, Class_ID, Ticket_Status_ID, Price, Discount, Seat_Number)
+            VALUES
+                ( @NextTicketID, @NextFlightID, @RandomClassID, 1, @FinalPrice, 0, @SeatNumber );
+            -- Status 1 = Confirmed
+
+            INSERT INTO Booking
+                (Booking_ID, Ticket_ID, Customer_ID, Payment_Method_ID, Booking_Date, Total_Amount, Cancellation_Reason_ID, Cancellation_Fee)
+            VALUES
+                (
+                    @NextBookingID, @NextTicketID, @RandomCustomerID, @RandomPaymentMethodID,
+                    DATEADD(day, - (CAST(RAND() * 30 + 1 AS INT)), @ScheduledDeparture),
+                    @FinalPrice, NULL, NULL
+                );
+
+            SET @TotalRevenueForFlight = @TotalRevenueForFlight + @FinalPrice;
+            SET @ConfirmedPassengerCount = @ConfirmedPassengerCount + 1;
+        END
+
         SET @TicketCounter = @TicketCounter + 1;
     END
 
         -- 4. Now, update the flight with the final passenger count and revenue
         ----------------------------------------------------------------
         UPDATE Flight
-        SET Passenger_Count = @TicketsToGenerateForFlight,
+        SET Passenger_Count = @ConfirmedPassengerCount,
             Revenue = @TotalRevenueForFlight
         WHERE Flight_ID = @NextFlightID;
 
@@ -204,7 +259,7 @@ BEGIN
     BEGIN CATCH
         IF @@TRANCOUNT > 0
             ROLLBACK TRANSACTION;
-
+        
         PRINT 'Error on flight generation loop #' + CAST(@FlightCounter + 1 AS VARCHAR) + ' for planned FlightID ' + CAST(@NextFlightID AS VARCHAR) + ': ' + ERROR_MESSAGE();
     END CATCH
 
@@ -225,5 +280,3 @@ PRINT 'Start Time: ' + CONVERT(VARCHAR, @StartTime, 120);
 PRINT 'End Time:   ' + CONVERT(VARCHAR, @EndTime, 120);
 PRINT 'Total Duration (seconds): ' + CAST(DATEDIFF(second, @StartTime, @EndTime) AS VARCHAR);
 GO
-
-select * from Ticket;
