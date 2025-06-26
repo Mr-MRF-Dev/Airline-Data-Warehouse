@@ -220,11 +220,12 @@ CREATE TABLE Dim_Customer
     -- SCD Fields
     Effective_Start_Date DATE,
     Effective_End_Date DATE,
-    Passport_Code_Change_Bit BIT,
-    Phone_Number_Change_Bit BIT,
-    Loyalty_Tier_Change_Bit BIT,
-    Is_Active_Change_Bit BIT,
-    Updated_At_Change_Bit BIT,
+    -- Passport_Code_Change_Bit BIT,
+    -- Phone_Number_Change_Bit BIT,
+    -- Loyalty_Tier_Change_Bit BIT,
+    -- Is_Active_Change_Bit BIT,
+    -- Updated_At_Change_Bit BIT,
+    Update_Bits CHAR(5),
     Is_Current BIT
 );
 
