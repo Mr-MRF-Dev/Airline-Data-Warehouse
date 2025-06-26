@@ -139,7 +139,7 @@ CREATE TABLE SA_Payment_Method
 (
     Payment_Method_ID INT,
     Method_Name VARCHAR(55),
-    Description NVARCHAR(250),
+    Description NVARCHAR(220),
     Provider_Name VARCHAR(55),
     Processing_Fee DECIMAL(8,2),
     Currency VARCHAR(5),
@@ -224,9 +224,9 @@ CREATE TABLE SA_Technician
 (
     Technician_ID INT,
     Employee_ID INT,
-    Specialty VARCHAR(100),
-    Certification_Level VARCHAR(50),
-    License_Number VARCHAR(30),
+    Specialty VARCHAR(110),
+    Certification_Level VARCHAR(55),
+    License_Number VARCHAR(35),
     License_Expiry_Date DATE,
     Training_Hours INT,
     Years_Experience INT,
