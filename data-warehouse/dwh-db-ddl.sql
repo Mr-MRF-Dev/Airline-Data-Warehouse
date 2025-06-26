@@ -630,9 +630,9 @@ CREATE TABLE Fact_Transaction_Booking_Ticket
     Feedback_Rating INT ,
     Analyzed_Text_Feedback INT,
     -- additional fields (not major & part of the fact table, just for saving the data)
-    Ticket_ID INT,
-    Booking_ID INT,
-    Seat_Number VARCHAR(12),
+    -- Ticket_ID INT,
+    -- Booking_ID INT,
+    -- Seat_Number VARCHAR(12),
 );
 
 
@@ -660,8 +660,8 @@ CREATE TABLE Fact_Transaction_Customer_Cargo
     Volume_CM3 DECIMAL(12,2),
     Declared_Value DECIMAL(12,2),
     -- additional fields (not major & part of the fact table, just for saving the data)
-    Ticket_ID INT,
-    Cargo_ID INT,
+    -- Ticket_ID INT,
+    -- Cargo_ID INT,
 );
 
 
