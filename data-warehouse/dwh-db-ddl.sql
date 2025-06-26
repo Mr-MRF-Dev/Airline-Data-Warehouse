@@ -483,10 +483,8 @@ CREATE TABLE Dim_Flight
     Flight_Crew_Captain_Name VARCHAR(110),
     Flight_Crew_Copilot_ID INT,
     Flight_Crew_Copilot_Name VARCHAR(110),
-    Flight_Crew_Senior_Attendant_ID INT,
-    Flight_Crew_Senior_Attendant_Name VARCHAR(110),
-    Flight_Crew_Security_ID INT,
-    Flight_Crew_Security_Name VARCHAR(110),
+    Flight_Crew_Senior_Flight_Attendant_ID INT,
+    Flight_Crew_Senior_Flight_Attendant_Name VARCHAR(110),
     Flight_Status_ID INT,
     Flight_Status VARCHAR(55),
 );
