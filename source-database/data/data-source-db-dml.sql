@@ -348,15 +348,13 @@ INSERT INTO Ticket_Status
     (Status_ID, Name, Description)
 VALUES
     (1, 'Confirmed', 'The ticket is confirmed and the seat is reserved.'),
-    (2, 'Cancelled', 'The ticket has been cancelled.'),
     (3, 'Used', 'The ticket has been used for travel.'),
     (4, 'Pending', 'The ticket booking is pending payment or confirmation.'),
     (5, 'Refunded', 'The ticket has been cancelled and refunded.'),
     (6, 'Exchanged', 'The ticket was exchanged for another flight.'),
     (7, 'Open', 'An open ticket with a flexible travel date.'),
     (8, 'Waitlisted', 'The passenger is on the waitlist for the flight.'),
-    (9, 'Checked-In', 'The passenger has checked in for the flight.'),
-    (10, 'No-Show', 'The passenger did not show up for the flight.');
+    (9, 'Checked-In', 'The passenger has checked in for the flight.')
 GO
 
 
