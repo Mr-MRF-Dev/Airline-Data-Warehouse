@@ -375,7 +375,7 @@ CREATE TABLE SA_Feedback
 
 DROP TABLE IF EXISTS SA_Cargo_Status;
 GO
-CREATE TABLE Cargo_Status
+CREATE TABLE SA_Cargo_Status
 (
     Cargo_Status_ID INT,
     Status_Name VARCHAR(55),
