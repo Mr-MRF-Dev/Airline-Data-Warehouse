@@ -442,8 +442,7 @@ VALUES
     (6, 'Cleared Customs', 'Cargo has cleared customs at the destination.'),
     (7, 'Out for Delivery', 'Cargo is out for final delivery.'),
     (8, 'Delivered', 'Cargo has been successfully delivered.'),
-    (9, 'On Hold', 'Cargo is on hold due to documentation or other issues.'),
-    (10, 'Cancelled', 'The cargo shipment has been cancelled.');
+    (9, 'On Hold', 'Cargo is on hold due to documentation or other issues.')
 GO
 
 
