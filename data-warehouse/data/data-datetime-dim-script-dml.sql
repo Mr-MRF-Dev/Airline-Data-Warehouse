@@ -200,6 +200,6 @@ GO
 
 
 
--- insert datetime from 2025 to 2026
-EXEC dbo.usp_Populate_Dim_DateTime @StartDate = '2025-01-01', @EndDate = '2026-12-31';
+-- insert datetime from 2024 to 2026
+EXEC dbo.usp_Populate_Dim_DateTime @StartDate = '2024-01-01', @EndDate = '2026-12-31';
 GO
