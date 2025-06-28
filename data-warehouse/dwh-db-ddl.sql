@@ -637,35 +637,6 @@ CREATE TABLE Fact_Transaction_Booking_Ticket
 
 
 
--- Fact: Customer Cargo (Transactional)
-DROP TABLE IF EXISTS Fact_Transaction_Customer_Cargo;
-GO
-CREATE TABLE Fact_Transaction_Customer_Cargo
-(
-    Flight_ID INT,
-    -- REFERENCES Dim_Flight(Flight_ID),
-    Ticket_Class_ID INT,
-    -- REFERENCES Dim_Ticket_Class(Class_SK),
-    Customer_ID INT,
-    -- REFERENCES Dim_Customer(Customer_SK),
-    Customer_Loyalty_Tier_ID INT,
-    -- REFERENCES Dim_Customer_Loyalty_Tier(Loyalty_Tier_SK),
-    Cargo_Type_ID INT,
-    -- REFERENCES Dim_Cargo_Type(Cargo_Type_ID),
-    Cargo_Status_ID INT,
-    -- REFERENCES Dim_Cargo_Status(Cargo_Status_ID),
-    Cargo_Delivery_Date BIGINT,
-    -- REFERENCES Dim_DateTime(DateTime_ID),
-    Weight_KG DECIMAL(12,2),
-    Volume_CM3 DECIMAL(12,2),
-    Declared_Value DECIMAL(12,2),
-    -- additional fields (not major & part of the fact table, just for saving the data)
-    -- Ticket_ID INT,
-    -- Cargo_ID INT,
-);
-
-
-
 -- Fact: Ticket Class Sales Daily Snapshot (Periodic)
 DROP TABLE IF EXISTS Fact_Periodic_Ticket_Class_Sales_Daily;
 GO
