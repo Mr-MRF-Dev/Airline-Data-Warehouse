@@ -267,6 +267,7 @@ GO
 CREATE TABLE Dim_Payment_Method
 (
     -- payment method information
+    Payment_Method_SK INT,
     Payment_Method_ID INT,
     Method_Name VARCHAR(55),
     Description NVARCHAR(220),
