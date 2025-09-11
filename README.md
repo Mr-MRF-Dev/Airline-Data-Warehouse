@@ -1,5 +1,8 @@
 # ✈ Airline Data Warehouse
 
+![GitHub repo size](https://img.shields.io/github/repo-size/Mr-MRF-Dev/Airline-Data-Warehouse)
+[![GitHub License](https://img.shields.io/github/license/Mr-MRF-Dev/Airline-Data-Warehouse)](/LICENSE)
+
 The Airline Data Warehouse (DWH) project is designed to consolidate, store, and analyze airline-related data efficiently. The goal is to provide a robust platform for data integration, reporting, and business intelligence, supporting better decision-making in the airline industry.
 
 This project is a collaborative effort developed as part of the **Database II course**. Our team has designed and implemented a comprehensive data warehouse solution specifically for the airline industry.
