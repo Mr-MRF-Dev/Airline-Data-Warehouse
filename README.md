@@ -4,6 +4,17 @@ The Airline Data Warehouse (DWH) project is designed to consolidate, store, and 
 
 This project is a collaborative effort developed as part of the **Database II course**. Our team has designed and implemented a comprehensive data warehouse solution specifically for the airline industry.
 
+## 🚧 Project Status: Developer Mode
+
+This project is currently in **developer mode**. Please note:
+
+- Some code and configuration files may contain bugs or errors.
+- Code optimization and refactoring are ongoing.
+- Features and documentation are subject to change.
+- Use at your own risk; not recommended for production environments.
+
+We appreciate your understanding as we continue to improve and
+
 ## Team Members
 
 The project is a collaborative effort by the following team members:
