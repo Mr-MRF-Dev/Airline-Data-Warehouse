@@ -13,12 +13,22 @@ This project is currently in **developer mode**. Please note:
 - Features and documentation are subject to change.
 - Use at your own risk; not recommended for production environments.
 
-We appreciate your understanding as we continue to improve and
+We appreciate your understanding as we continue to improve and stabilize the project.
 
-## Team Members
+## 👥 Team Members
 
 The project is a collaborative effort by the following team members:
 
 - [Alipour8](https://github.com/Alipour8)
 - [Mohammad Kazemi](https://github.com/mohammadkazemy)
 - [Mr MRF Dev](https://github.com/Mr-MRF-Dev)
+
+## 🤝 Contributing
+
+we welcome any contributions you may have. If you're interested in helping out, fork the repository
+and create an [Issue](https://github.com/Mr-MRF-Dev/Airline-Data-Warehouse/issues) and
+[PR](https://github.com/Mr-MRF-Dev/Airline-Data-Warehouse/pulls).
+
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](/LICENSE) file for details.
