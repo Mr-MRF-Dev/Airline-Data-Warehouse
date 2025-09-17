@@ -18,6 +18,54 @@ This project is currently in **developer mode**. Please note:
 
 We appreciate your understanding as we continue to improve and stabilize the project.
 
+## 🐳 Using Docker
+
+You can also run Airline-Data-Warehouse using Docker, which provides a consistent environment across different systems.
+
+### Prerequisites
+
+Make sure you have [Docker](https://www.docker.com/) installed on your system.
+
+### Running with Docker
+
+1. Clone the repository (if you haven't already):
+
+   ```bash
+   git clone https://github.com/Mr-MRF-Dev/Airline-Data-Warehouse.git
+   ```
+
+    navigate to the project directory:
+
+   ```bash
+   cd Airline-Data-Warehouse
+   ```
+
+2. Build the Docker image:
+
+   ```bash
+   docker build -t airline-data-warehouse .
+   ```
+
+3. Run the container:
+
+   ```bash
+   docker run -p 1433:1433 airline-data-warehouse
+   ```
+
+4. using [sql server management studio](https://learn.microsoft.com/en-us/ssms/) connect to the database using the following credentials:
+
+   - Server Type: `Database Engine`
+   - Server Name: `localhost,1433`
+   - Authentication: `SQL Server Authentication`
+   - Username: `sa`
+   - Password: `Admin@Pass`
+
+   or using [sql cmd](https://learn.microsoft.com/en-us/sql/tools/sqlcmd-utility?view=sql-server-ver16):
+
+   ```bash
+    sqlcmd -S localhost,1433 -U sa -P Admin@Pass
+    ```
+
 ## 👥 Team Members
 
 The project is a collaborative effort by the following team members:
